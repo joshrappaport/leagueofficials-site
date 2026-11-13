@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — LeagueOfficials</title>
+<link rel="icon" type="image/png" href="whistle-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f; --surface: #0d1117; --surface2: #141b27; --border: #1e2d3d;
+  --teal: #1dd4a8; --teal-dim: rgba(29,212,168,0.10); --text: #e8edf5;
+  --text2: #8a9bb5; --text3: #5a6d85; --white: #fff;
+  --font-head: 'Outfit', sans-serif; --font-body: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 32px; border-bottom: 1px solid var(--border);
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-weight: 800; font-size: 1.15rem; color: var(--white); text-decoration: none; }
+.nav-brand img { width: 34px; height: 34px; border-radius: 8px; }
+.nav-back { color: var(--teal); text-decoration: none; font-size: 0.88rem; font-weight: 600; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 64px 24px 100px; }
+h1 { font-family: var(--font-head); font-size: 2.2rem; font-weight: 800; color: var(--white); margin-bottom: 8px; }
+.subtitle { font-size: 0.95rem; color: var(--text2); margin-bottom: 48px; line-height: 1.7; }
+a { color: var(--teal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Contact card */
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.contact-icon {
+  width: 48px; height: 48px; min-width: 48px;
+  background: var(--teal-dim);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+}
+.contact-label { font-family: var(--font-head); font-weight: 700; font-size: 1rem; color: var(--white); margin-bottom: 4px; }
+.contact-detail { font-size: 0.88rem; color: var(--text2); }
+.contact-detail a { font-weight: 600; }
+
+/* Section headers */
+h2 {
+  font-family: var(--font-head); font-size: 1.4rem; font-weight: 800;
+  color: var(--white); margin: 48px 0 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+h2 .tag {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--teal); background: var(--teal-dim);
+  padding: 3px 10px; border-radius: 100px;
+}
+
+/* FAQ items */
+.faq { border-top: 1px solid var(--border); }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%; background: none; border: none; cursor: pointer;
+  text-align: left; padding: 18px 0;
+  font-family: var(--font-head); font-weight: 700; font-size: 0.95rem;
+  color: var(--white); display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.faq-q:hover { color: var(--teal); }
+.faq-q .chevron { color: var(--text3); font-size: 0.75rem; transition: transform 0.2s; flex-shrink: 0; }
+.faq-item.open .faq-q .chevron { transform: rotate(180deg); color: var(--teal); }
+.faq-item.open .faq-q { color: var(--teal); }
+.faq-a {
+  display: none; padding: 0 0 18px;
+  font-size: 0.88rem; color: var(--text2); line-height: 1.75;
+}
+.faq-item.open .faq-a { display: block; }
+.faq-a p { margin-bottom: 10px; }
+.faq-a p:last-child { margin-bottom: 0; }
+.faq-a ul { margin: 8px 0 10px 20px; }
+.faq-a li { margin-bottom: 5px; }
+
+/* Tier pills inline */
+.tier-pill {
+  display: inline-block; padding: 2px 9px; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 700; margin: 0 2px;
+  vertical-align: middle;
+}
+.tier-bronze { background: rgba(205,127,50,0.15); color: #cd7f32; }
+.tier-silver { background: rgba(192,192,192,0.12); color: #c0c0c0; }
+.tier-gold { background: rgba(255,215,0,0.12); color: #ffd700; }
+.tier-platinum { background: rgba(229,228,226,0.12); color: #e5e4e2; }
+.tier-diamond { background: rgba(185,242,255,0.12); color: #b9f2ff; }
+
+.footer { padding: 40px 32px; border-top: 1px solid var(--border); text-align: center; font-size: 0.72rem; color: var(--text3); }
+.footer a { color: var(--text3); margin: 0 10px; }
+.footer a:hover { color: var(--teal); text-decoration: none; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><img src="whistle-icon.png" alt="LeagueOfficials"> LeagueOfficials</a>
+  <a href="index.html" class="nav-back">← Back to Home</a>
+</nav>
+
+<div class="wrap">
+  <h1>Support</h1>
+  <p class="subtitle">Questions about LeagueOfficials? Find answers below or reach out directly — we're happy to help.</p>
+
+  <div class="contact-card">
+    <div class="contact-icon">✉️</div>
+    <div>
+      <div class="contact-label">Email Support</div>
+      <div class="contact-detail">Reach us at <a href="mailto:hello@leagueofficials.app">hello@leagueofficials.app</a> — we respond within one business day.</div>
+    </div>
+  </div>
+
+  <!-- Officials -->
+  <h2>For Officials <span class="tag">Referees</span></h2>
+  <div class="faq">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do I claim a game?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Open the <strong>Dashboard</strong> tab to see open games in your area that match your sports and tier. Tap any game card to view details, then tap <strong>Claim</strong> to request the assignment. The league admin will receive a notification and confirm or decline.</p>
+        <p>Games you've applied for appear in <strong>My Games</strong> with a "Pending" status until the admin acts on them.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        What are Whistle Tiers and how do I advance?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Whistle Tiers reflect your officiating experience and knowledge. Tiers in order:</p>
+        <ul>
+          <li><span class="tier-pill tier-bronze">Bronze</span> — Starting tier for all new officials</li>
+          <li><span class="tier-pill tier-silver">Silver</span> — Intermediate experience</li>
+          <li><span class="tier-pill tier-gold">Gold</span> — Advanced, high-demand officials</li>
+          <li><span class="tier-pill tier-platinum">Platinum</span> — Elite level</li>
+          <li><span class="tier-pill tier-diamond">Diamond</span> — Top-rated, most experienced officials</li>
+        </ul>
+        <p>Your tier is set by your league or platform administrator based on your experience, quiz results, and service record. Complete training quizzes in the <strong>Training</strong> tab to earn Knowledge Badges (Basics, Proficient, Master) for each sport — these feed into your tier evaluation.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How are service hours tracked?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Service hours are logged automatically when a league admin marks a game you officiated as completed and submits a postgame report. You can view your cumulative service hours on your <strong>Profile</strong> screen and on your Dashboard stat cards.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        I didn't receive a game assignment notification email.
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>First, check your spam or promotions folder — transactional emails occasionally land there. Emails are sent from <strong>noreply@leagueofficials.app</strong>; adding this address to your contacts can help with deliverability.</p>
+        <p>If you've checked spam and still don't see it, contact us at <a href="mailto:hello@leagueofficials.app">hello@leagueofficials.app</a> with your account email and we'll investigate the delivery logs.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do training quizzes work?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>The <strong>Training</strong> tab has rules quizzes for each sport at three levels: <strong>Basics</strong>, <strong>Proficient</strong>, and <strong>Master</strong>. Pass a quiz to earn the corresponding Knowledge Badge, which appears on your profile. Badges are cumulative — earning Master also reflects Proficient and Basics knowledge for that sport.</p>
+        <p>You can retake quizzes as many times as you'd like. Only passing scores are recorded.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- League Admins -->
+  <h2>For League Admins <span class="tag">Leagues</span></h2>
+  <div class="faq">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do I post a game?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Go to the <strong>Post Game</strong> tab and fill in the sport, date, time, venue, age group, pay rate, and referee tier requirement. Tap <strong>Post Game</strong> to publish it to the marketplace. Eligible officials in your area will see it immediately on their Dashboard.</p>
+        <p>You can also post an entire season's worth of games at once using <strong>Batch Season</strong> mode — enter your season's start date, end date, day of week, and time, and LeagueOfficials generates all game slots automatically.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do I manage multiple leagues?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>If you're an admin for more than one league, tap the <strong>league name</strong> in the Dashboard header to open the league switcher. Selecting a different league updates all dashboard data — games, fill rate, officials, and seasons — to reflect that league. You can switch leagues at any time without logging out.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do I assign an official to a game?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>When an official requests a game, you'll receive a notification. Open the game from your Dashboard, review the official's profile and tier, then tap <strong>Confirm</strong> to assign them or <strong>Decline</strong> to keep the game open for others. You can also proactively browse officials via the <strong>Find Refs</strong> tab and invite them to specific games.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do I submit a postgame report?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>After a game is played, go to the <strong>Post Game</strong> tab and select the completed game. Fill in the final score, any notes, and confirm the official's attendance. Submitting the report marks the game as completed and automatically credits the assigned official's service hours.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        What does fill rate mean on my dashboard?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Fill rate is the percentage of your posted games that have a confirmed official, calculated as <strong>(filled + completed games) ÷ total games posted</strong>. A high fill rate means your games are being staffed reliably. Posting games at least 5–7 days in advance significantly improves fill rate.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Account -->
+  <h2>Account &amp; Access</h2>
+  <div class="faq">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        I forgot my password.
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>On the login screen, tap <strong>Forgot Password</strong> and enter your account email. You'll receive a reset link within a few minutes. Tap the link — it will open the LeagueOfficials app directly to the reset screen where you can set a new password.</p>
+        <p>If you don't receive the email within 5 minutes, check your spam folder or contact us at <a href="mailto:hello@leagueofficials.app">hello@leagueofficials.app</a>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do I delete my account?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>To request account deletion, email <a href="mailto:hello@leagueofficials.app">hello@leagueofficials.app</a> from the address associated with your account. Include "Delete my account" in the subject line. We'll permanently delete your account and associated data within 5 business days and confirm by email when it's done.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        Can I change my email address?
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Email changes are handled by our support team. Send a request to <a href="mailto:hello@leagueofficials.app">hello@leagueofficials.app</a> from your current account email, including your desired new email address. We'll update it and send a confirmation to the new address.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        I'm having trouble signing in.
+        <span class="chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Try the following steps:</p>
+        <ul>
+          <li>Double-check your email address — it's case-sensitive.</li>
+          <li>Use <strong>Forgot Password</strong> to reset your password if you're unsure.</li>
+          <li>Ensure you're using the latest version of the LeagueOfficials app.</li>
+          <li>Check your internet connection and try again.</li>
+        </ul>
+        <p>If none of these resolve the issue, email us at <a href="mailto:hello@leagueofficials.app">hello@leagueofficials.app</a> with your account email and a description of the error.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Still need help -->
+  <div style="margin-top: 56px; padding: 28px 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; text-align: center;">
+    <div style="font-size: 1.5rem; margin-bottom: 10px;">💬</div>
+    <div style="font-family: var(--font-head); font-weight: 700; font-size: 1rem; color: var(--white); margin-bottom: 6px;">Still need help?</div>
+    <div style="font-size: 0.88rem; color: var(--text2);">Email us at <a href="mailto:hello@leagueofficials.app">hello@leagueofficials.app</a> — we respond within one business day.</div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  © 2026 LeagueOfficials.
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="support.html">Support</a>
+</footer>
+
+<script>
+function toggle(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  // Open this one if it wasn't already open
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

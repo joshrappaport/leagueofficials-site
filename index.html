@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeagueOfficials — Referee Scheduling for Youth Sports Leagues</title>
+<meta name="description" content="LeagueOfficials helps youth sports leagues find and schedule qualified referees fast. Post games, track assignments, and build your local ref pool.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://leagueofficials.app/">
+<meta property="og:title" content="LeagueOfficials — Post a Game. Get a Ref. Done.">
+<meta property="og:description" content="Referee scheduling for youth sports leagues. Post games, find qualified officials, and track every assignment from open to done.">
+<meta property="og:image" content="https://leagueofficials.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="LeagueOfficials">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LeagueOfficials — Post a Game. Get a Ref. Done.">
+<meta name="twitter:description" content="Referee scheduling for youth sports leagues. Post games, find qualified officials, and track every assignment from open to done.">
+<meta name="twitter:image" content="https://leagueofficials.app/og-image.png">
+
+<link rel="icon" type="image/png" href="whistle-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--surface:#0d1117;--surface2:#141b27;--border:#1e2d3d;--teal:#1dd4a8;--teal-dim:rgba(29,212,168,0.12);--teal-glow:rgba(29,212,168,0.25);--blue:#3b82f6;--blue-dim:rgba(59,130,246,0.12);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);--text:#e8edf5;--text2:#b0c0d4;--text3:#7a8ea8;--white:#fff;--bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#e5e4e2;--diamond:#b9f2ff;--font-head:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;overflow-x:hidden}body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:rgba(7,9,15,0.6);backdrop-filter:blur(20px);border-bottom:1px solid transparent;transition:all 0.3s}
+.nav.scrolled{border-bottom-color:var(--border);background:rgba(7,9,15,0.92)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:800;font-size:1.15rem;color:var(--white);text-decoration:none}
+.nav-brand img{width:34px;height:34px;border-radius:8px}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:0.88rem;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--teal)}
+.nav-cta{background:var(--teal);color:#000 !important;font-weight:700 !important;font-size:0.82rem;font-family:var(--font-head);padding:8px 18px;border-radius:8px;text-decoration:none;transition:all 0.2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--teal-glow)}
+/* ── Base layout ── */
+section{padding:64px 32px;max-width:1120px;margin:0 auto}
+.section-eyebrow{font-family:var(--font-head);font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.section-title{font-family:var(--font-head);font-size:clamp(1.9rem,3.5vw,2.6rem);font-weight:800;color:var(--white);line-height:1.12;margin-bottom:14px}
+.section-sub{font-size:0.97rem;color:var(--text2);max-width:520px;line-height:1.72}
+.section-header{text-align:center;margin-bottom:36px}.section-header .section-sub{margin:0 auto}
+.section-divider{max-width:1120px;margin:0 auto;border:none;border-top:1px solid var(--border)}
+
+/* ── Hero ── */
+.hero{padding-top:108px;padding-bottom:52px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(29,212,168,0.06) 0%,transparent 70%);pointer-events:none}
+.hero .section-eyebrow{display:inline-block}
+.hero .section-title{font-size:clamp(2.4rem,5.5vw,4rem);max-width:760px;margin:0 auto 18px}
+.hero .section-title .hl{color:var(--teal)}
+.hero-ecosystem{font-size:0.9rem;color:var(--text3);letter-spacing:0.08em;margin:10px 0 0;font-family:var(--font-body)}
+.hero .section-sub{max-width:560px;margin:0 auto 28px;font-size:0.96rem;line-height:1.75}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:var(--bg);font-family:var(--font-head);font-weight:700;font-size:1rem;padding:15px 44px;border-radius:12px;text-decoration:none;transition:all 0.25s}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--teal-glow)}
+.hero-note{font-size:0.8rem;color:var(--text3);margin-top:12px}
+.sport-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:28px;max-width:580px;margin-left:auto;margin-right:auto}
+.sport-chip{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);padding:7px 15px;border-radius:100px;font-size:0.8rem;font-weight:600;color:var(--text);flex:1 1 calc(33.33% - 8px);max-width:calc(50% - 4px);justify-content:center}
+
+/* ── For sections: value grid ── */
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-top:36px}
+.value-list{display:flex;flex-direction:column;gap:20px}
+.value-item{display:flex;gap:14px;align-items:flex-start}
+/* Icon: smaller, tighter, emoji-safe size */
+.value-icon{width:38px;height:38px;min-width:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;line-height:1}
+.value-icon.teal{background:var(--teal-dim)}.value-icon.blue{background:var(--blue-dim)}.value-icon.amber{background:var(--amber-dim)}
+/* Feature name: bigger, bolder, clearly a label */
+.value-item h4{font-family:var(--font-head);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:3px;line-height:1.2}
+.value-item p{font-size:0.9rem;color:var(--text2);line-height:1.68}
+.value-cta{display:inline-flex;align-items:center;gap:6px;margin-top:16px;color:var(--teal);font-weight:700;font-size:0.88rem;text-decoration:none;transition:gap 0.2s}
+.value-cta:hover{gap:10px}
+/* Remove pill styles — no longer used */
+.feature-list{display:none}
+.feature-pill{display:none}
+.mock-screen{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;overflow:hidden}
+.mock-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.mock-header-title{font-family:var(--font-head);font-weight:700;font-size:0.9rem;color:var(--white)}
+.mock-badge{font-size:0.62rem;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.05em}
+.mock-badge.open{background:rgba(16,185,129,0.15);color:#10b981}.mock-badge.pending{background:rgba(245,158,11,0.15);color:#f59e0b}.mock-badge.filled{background:rgba(59,130,246,0.15);color:#3b82f6}
+.mock-game{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.mock-game:last-child{margin-bottom:0}
+.mock-game-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mock-game-sport{font-weight:700;font-size:0.82rem;color:var(--white);display:flex;align-items:center;gap:6px}
+.mock-game-title{font-size:0.78rem;color:var(--text);font-weight:600;margin-bottom:4px}
+.mock-game-meta{font-size:0.72rem;color:var(--text3);display:flex;flex-wrap:wrap;gap:10px}
+.mock-game-pay{font-weight:700;color:var(--teal);font-size:0.82rem}
+.mock-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.mock-stat{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.mock-stat-val{font-family:var(--font-head);font-weight:800;font-size:1.4rem;color:var(--white)}
+.mock-stat-label{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
+.mock-fill-bar{background:var(--surface2);border-radius:8px;height:8px;margin-bottom:16px;overflow:hidden}
+.mock-fill-inner{background:var(--teal);height:100%;border-radius:8px;width:72%}
+.mock-fill-label{display:flex;justify-content:space-between;margin-bottom:6px}
+.mock-fill-label span{font-size:0.72rem;color:var(--text3);font-weight:600}
+.mock-fill-label strong{font-size:0.82rem;color:var(--teal);font-weight:800}
+/* ── Tiers: sticky scroll layout ── */
+.tiers-section{text-align:center}
+.tiers-sticky-wrap{display:grid;grid-template-columns:260px 1fr;gap:48px;align-items:start;margin-top:48px;text-align:left}
+.tiers-nav{position:sticky;top:88px;display:flex;flex-direction:column;gap:10px}
+.tier-nav-btn{display:flex;align-items:center;justify-content:center;gap:14px;padding:18px 18px;border-radius:14px;border:1px solid transparent;background:none;cursor:pointer;font-family:var(--font-body);transition:all 0.22s;text-align:center;width:100%}
+.tier-nav-btn:hover{background:var(--surface2)}
+.tier-nav-icon{width:36px;height:36px;border-radius:8px;flex-shrink:0;object-fit:cover}
+.tier-nav-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:2px solid currentColor;transition:all 0.22s;display:none}
+.tier-nav-btn.active .tier-nav-dot{background:currentColor}
+.tier-nav-label{font-family:var(--font-head);font-weight:700;font-size:1rem}
+.tier-nav-sub{font-size:0.78rem;color:var(--text3);margin-top:2px}
+.tier-nav-btn.active{background:var(--surface);border-color:var(--border)}
+.tier-nav-btn[data-tier="bronze"]{color:var(--bronze)}.tier-nav-btn[data-tier="silver"]{color:var(--silver)}.tier-nav-btn[data-tier="gold"]{color:var(--gold)}.tier-nav-btn[data-tier="platinum"]{color:var(--platinum)}.tier-nav-btn[data-tier="diamond"]{color:var(--diamond)}
+.tier-nav-btn .tier-nav-label,.tier-nav-btn .tier-nav-sub{color:var(--text2)}
+.tier-nav-btn.active .tier-nav-label{color:currentColor}
+
+.tiers-detail{display:flex;flex-direction:column;gap:0}
+.tier-panel{display:none;animation:tierFade 0.28s ease}
+.tier-panel.active{display:block}
+@keyframes tierFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.tier-panel-inner{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;position:relative;overflow:hidden}
+.tier-panel-inner::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.tier-panel[data-tier="bronze"] .tier-panel-inner::before{background:var(--bronze)}
+.tier-panel[data-tier="silver"] .tier-panel-inner::before{background:var(--silver)}
+.tier-panel[data-tier="gold"] .tier-panel-inner::before{background:var(--gold)}
+.tier-panel[data-tier="platinum"] .tier-panel-inner::before{background:var(--platinum)}
+.tier-panel[data-tier="diamond"] .tier-panel-inner::before{background:var(--diamond)}
+
+.tier-panel-top{display:flex;align-items:center;gap:20px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.tier-panel-whistle{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+.tier-panel-whistle::before{content:'';position:absolute;inset:0;border-radius:50%;border:3px solid transparent}
+.tier-panel-whistle img{width:52px;height:52px;border-radius:10px;position:relative;z-index:1}
+.tier-panel[data-tier="bronze"] .tier-panel-whistle::before{border-color:var(--bronze);box-shadow:0 0 12px rgba(205,127,50,0.2)}
+.tier-panel[data-tier="bronze"] .tier-panel-whistle img{filter:sepia(1) saturate(2) hue-rotate(-10deg) brightness(0.85)}
+.tier-panel[data-tier="silver"] .tier-panel-whistle::before{border-color:var(--silver)}
+.tier-panel[data-tier="silver"] .tier-panel-whistle img{filter:saturate(0) brightness(1.2) contrast(0.9)}
+.tier-panel[data-tier="gold"] .tier-panel-whistle::before{border-color:var(--gold);box-shadow:0 0 18px rgba(255,215,0,0.3)}
+.tier-panel[data-tier="gold"] .tier-panel-whistle img{filter:sepia(1) saturate(3) hue-rotate(10deg) brightness(1.1)}
+.tier-panel[data-tier="platinum"] .tier-panel-whistle::before{border-color:var(--platinum);box-shadow:0 0 18px rgba(229,228,226,0.3)}
+.tier-panel[data-tier="platinum"] .tier-panel-whistle img{filter:saturate(0) brightness(1.35) contrast(1.1)}
+.tier-panel[data-tier="diamond"] .tier-panel-whistle::before{border-color:var(--diamond);border-width:3.5px;box-shadow:0 0 24px rgba(185,242,255,0.4)}
+.tier-panel[data-tier="diamond"] .tier-panel-whistle::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:1.5px solid rgba(185,242,255,0.3);animation:diamond-pulse 2.5s ease-in-out infinite}
+.tier-panel[data-tier="diamond"] .tier-panel-whistle img{filter:saturate(0.5) hue-rotate(160deg) brightness(1.2)}
+@keyframes diamond-pulse{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
+
+.tier-panel-heading{}
+.tier-panel-name{font-family:var(--font-head);font-weight:800;font-size:1.6rem;margin-bottom:4px}
+.tier-panel[data-tier="bronze"] .tier-panel-name{color:var(--bronze)}
+.tier-panel[data-tier="silver"] .tier-panel-name{color:var(--silver)}
+.tier-panel[data-tier="gold"] .tier-panel-name{color:var(--gold)}
+.tier-panel[data-tier="platinum"] .tier-panel-name{color:var(--platinum)}
+.tier-panel[data-tier="diamond"] .tier-panel-name{color:var(--diamond)}
+.tier-panel-req{font-size:0.75rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.tier-panel-tagline{font-family:var(--font-head);font-size:1rem;font-weight:600;color:var(--text);line-height:1.4}
+
+.tier-panel-body{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tier-stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.tier-stat-label{font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.tier-stat-val{font-family:var(--font-head);font-weight:800;font-size:1.3rem;color:var(--white)}
+.tier-stat-note{font-size:0.76rem;color:var(--text2);line-height:1.5;margin-top:4px}
+.tier-unlock-list{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.tier-unlock-item{display:flex;align-items:flex-start;gap:10px;font-size:0.84rem;color:var(--text2);line-height:1.55}
+.tier-unlock-check{font-size:0.75rem;font-weight:700;margin-top:2px;flex-shrink:0}
+.tier-panel[data-tier="bronze"] .tier-unlock-check{color:var(--bronze)}
+.tier-panel[data-tier="silver"] .tier-unlock-check{color:var(--silver)}
+.tier-panel[data-tier="gold"] .tier-unlock-check{color:var(--gold)}
+.tier-panel[data-tier="platinum"] .tier-unlock-check{color:var(--platinum)}
+.tier-panel[data-tier="diamond"] .tier-unlock-check{color:var(--diamond)}
+
+.tier-note{margin-top:28px;font-size:0.78rem;color:var(--text3);max-width:680px;margin-left:auto;margin-right:auto;line-height:1.6;text-align:center}
+
+/* tiers mobile handled in main @media block */
+.features-section{text-align:center}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.features-col{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px;text-align:left}
+.features-col h3{font-family:var(--font-head);font-weight:700;font-size:1.05rem;color:var(--white);margin-bottom:20px}
+.feature-item{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:0.84rem;color:var(--text2)}
+.feature-check{color:var(--teal);font-weight:700;font-size:0.9rem}
+.waitlist-section{text-align:center;padding:64px 32px 80px}
+.waitlist-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 40px;max-width:720px;margin:0 auto}
+.waitlist-box .section-title{font-size:1.8rem;margin-bottom:8px}
+.waitlist-box .section-sub{margin:0 auto 28px}
+.waitlist-role-select{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.role-btn{padding:10px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;border:1px solid var(--border);background:none;color:var(--text2);cursor:pointer;transition:all 0.2s;font-family:var(--font-body);white-space:nowrap}
+.role-btn.active{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.waitlist-form{display:flex;flex-direction:column;gap:10px;max-width:560px;margin:0 auto}
+.waitlist-input{flex:1;min-width:0;padding:14px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:0.95rem;font-family:var(--font-body);outline:none;transition:border-color 0.2s}
+.waitlist-input:focus{border-color:var(--teal)}
+.waitlist-input-group{display:flex;flex-direction:column;gap:4px;text-align:left}
+.waitlist-input-label{font-size:0.73rem;font-weight:600;color:var(--text3);letter-spacing:0.04em;text-transform:uppercase}
+.waitlist-submit{background:var(--teal);color:#000;font-weight:700;font-size:0.95rem;padding:15px 24px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font-head);transition:all 0.2s;white-space:nowrap;width:100%}
+.waitlist-submit:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--teal-glow)}
+.waitlist-msg{display:none;margin-top:14px;font-size:0.84rem}
+.waitlist-note{font-size:0.75rem;color:var(--text2);margin-top:14px}
+.sport-btn,.exp-btn,.pain-btn{padding:9px 14px;border-radius:8px;font-size:0.8rem;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;transition:all 0.18s;font-family:var(--font-body)}
+.sport-btn.active,.exp-btn.active,.pain-btn.active{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+/* Dynamic form group container */
+.form-group{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;animation:fadeSlideIn 0.2s ease}
+.form-group-label{font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;text-align:left}
+.form-group-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+/* Sport buttons: always 3 per row */
+.sport-btn{flex:1 1 calc(33.33% - 6px);max-width:calc(33.33% - 6px);justify-content:center;text-align:center}
+/* Pain buttons: full width stacked */
+.pain-btn{width:100%;text-align:center}
+/* Exp buttons: equal width side by side */
+.exp-btn{flex:1}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.footer{padding:48px 32px;border-top:1px solid var(--border);text-align:center}
+.footer-brand{display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;font-family:var(--font-head);font-weight:800;font-size:1rem;color:var(--white)}
+.footer-brand img{width:28px;height:28px;border-radius:6px}
+.footer-tagline{font-size:0.78rem;color:var(--text3);margin-bottom:16px}
+.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px}
+.footer-links a{color:var(--text3);font-size:0.8rem;text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:var(--teal)}
+.footer-copy{font-size:0.72rem;color:var(--text3)}
+.value-show-more{display:none;align-items:center;justify-content:center;gap:6px;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text2);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:var(--font-body);width:100%;transition:all 0.2s}
+.value-show-more:hover{border-color:var(--teal);color:var(--teal)}
+.reveal{transform:translateY(24px);transition:all 0.6s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text2);margin:5px 0;transition:all 0.3s}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.rules-db-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:768px){
+  /* ── Core layout ── */
+  section{padding:40px 18px}
+  .section-title{font-size:clamp(1.65rem,7vw,2.1rem)}
+  .section-sub{font-size:0.86rem;line-height:1.68;max-width:100%}
+
+  /* ── Hero ── */
+  .hero{padding-top:100px;padding-bottom:32px}
+  .hero-cta{width:100%;justify-content:center;padding:15px 24px}
+  .hero .section-title{font-size:clamp(2rem,9vw,2.8rem);margin-bottom:14px}
+  .hero .section-sub{font-size:0.88rem;margin-bottom:24px}
+  .hero-cta{padding:13px 32px;font-size:0.95rem}
+  .hero-note{font-size:0.73rem}
+  /* Sport chips: even distribution, no orphan */
+  .sport-chips{gap:6px;margin-top:20px;padding:0 4px}
+  .sport-chip{font-size:0.74rem;padding:6px 10px;flex:1 1 calc(33.33% - 6px);justify-content:center;max-width:calc(50% - 4px)}
+
+  /* ── Nav ── */
+  .hamburger{display:block}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(7,9,15,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:20px 24px;gap:14px;border-bottom:1px solid var(--border)}
+  .nav-links.open{display:flex}
+  .nav-cta{text-align:center;display:block;padding:10px 18px}
+  .nav-brand{font-size:1rem}
+  .nav-brand img{width:30px;height:30px}
+  .nav{padding:14px 20px}
+
+  /* ── Value sections ── */
+  .value-grid{grid-template-columns:1fr;gap:24px;margin-top:24px}
+  .mock-screen{display:none}
+  .value-list{gap:18px}
+  .value-item{gap:12px}
+  /* Smaller icon on mobile */
+  .value-icon{width:34px;height:34px;min-width:34px;font-size:0.95rem;border-radius:8px}
+  .value-item h4{font-size:0.95rem;margin-bottom:3px}
+  .value-item p{font-size:0.81rem;line-height:1.6}
+  .value-cta{margin-top:16px;font-size:0.88rem;width:100%;justify-content:center;background:var(--surface2);border:1px solid var(--teal-dim);border-radius:10px;padding:12px 16px}
+
+  /* All feature items always visible on mobile — no collapse */
+  .value-item{display:flex !important}
+  .value-show-more{display:none !important}
+
+/* ── Rules DB — single column on mobile ── */
+  .rules-db-grid{grid-template-columns:1fr;gap:10px}
+  .rules-db-grid > div{padding:18px 16px;border-radius:14px}
+  .rules-db-grid > div h4{font-size:0.88rem}
+  .rules-db-grid > div p{font-size:0.78rem;line-height:1.5}
+
+  /* ── Tiers ── */
+  .tiers-sticky-wrap{grid-template-columns:1fr;gap:16px;margin-top:28px}
+  .tiers-nav{flex-direction:row;flex-wrap:nowrap;position:static;gap:8px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;width:100%}
+  .tiers-nav::-webkit-scrollbar{display:none}
+  .tier-nav-btn{flex:0 0 auto;flex-direction:column;align-items:center;gap:6px;padding:12px 10px;text-align:center;width:calc(20% - 7px);min-width:56px;max-width:80px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface)}
+  .tier-nav-btn.active{background:var(--surface2);border-color:currentColor!important}
+  .tier-nav-icon{width:26px;height:26px;border-radius:5px}
+  .tier-nav-sub{display:none}
+  .tier-nav-label{font-size:0.72rem;font-weight:700}
+  .tier-panel-inner{padding:20px 16px;border-radius:16px}
+  .tier-panel-body{grid-template-columns:1fr 1fr;gap:10px}
+  .tier-unlock-list{grid-column:auto;gap:8px}
+  .tier-panel-top{flex-direction:row;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px}
+  .tier-panel-whistle{width:56px;height:56px;flex-shrink:0}
+  .tier-panel-whistle img{width:36px;height:36px}
+  .tier-panel-name{font-size:1.15rem}
+  .tier-panel-tagline{font-size:0.84rem}
+  .tier-stat-box{padding:12px;border-radius:10px}
+  .tier-stat-val{font-size:1.05rem}
+  .tier-stat-label{font-size:0.65rem}
+  .tier-stat-note{font-size:0.7rem}
+  .tier-unlock-item{font-size:0.78rem}
+  .tier-note{font-size:0.74rem;margin-top:20px;padding:0 4px}
+
+  /* ── Inline callout cards ── */
+  .inline-callout{max-width:100% !important;margin-left:0 !important;margin-right:0 !important;}
+
+  /* ── Waitlist ── */
+  .waitlist-section{padding:40px 16px 56px}
+  .waitlist-box{padding:28px 16px;border-radius:16px}
+  .waitlist-box .section-title{font-size:1.45rem;margin-bottom:8px}
+  .waitlist-box .section-sub{font-size:0.83rem}
+  .waitlist-role-select{gap:6px;justify-content:center}
+  .role-btn{padding:7px 12px;font-size:0.77rem}
+  .role-btn{font-size:0.77rem;padding:7px 13px}
+  .waitlist-input{font-size:0.88rem;padding:11px 14px}
+  .waitlist-submit{font-size:0.9rem;padding:13px 20px}
+  .waitlist-note{font-size:0.72rem}
+  .sport-btn,.exp-btn,.pain-btn{font-size:0.76rem;padding:6px 12px}
+
+}
+@media(max-width:480px){.tiers-grid{grid-template-columns:1fr}}
+/* rules-db-grid defined above */
+
+/* ── Phone Frames ── */
+.phone-frame{position:relative;background:#0a0a10;border-radius:50px;padding:10px;box-shadow:0 0 0 1px #262636,0 0 0 3px #13131e,0 28px 90px rgba(0,0,0,0.7),0 0 80px rgba(29,212,168,0.05);flex-shrink:0;display:inline-block}
+.phone-frame::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);width:92px;height:26px;background:#0a0a10;border-radius:0 0 18px 18px;z-index:10;pointer-events:none}
+.phone-frame-inner{border-radius:40px;overflow:hidden;background:#07090f;line-height:0;position:relative}
+.phone-frame-inner img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;border-radius:40px}
+/* Section phones */
+.section-phone{display:flex;justify-content:center;align-items:flex-start;padding:12px 0 0}
+.section-phone .phone-frame{width:200px}
+.section-phone .phone-frame-inner{height:400px}
+.section-phone.single .phone-frame{width:252px}
+.section-phone.single .phone-frame-inner{height:500px}
+@media(max-width:768px){
+  .section-phone{display:none}
+}
+</style>
+</head>
+<body>
+<nav class="nav" id="nav">
+  <a href="#" class="nav-brand"><img src="whistle-icon.png" alt="LeagueOfficials"> LeagueOfficials</a>
+  <button class="hamburger" onclick="this.classList.toggle('active');document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="nav-links">
+    <a href="#leagues">For Leagues</a>
+    <a href="#referees">For Refs</a>
+    <a href="#students">For Students</a>
+    <a href="#waitlist" class="nav-cta">Get Early Access →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="section-eyebrow">Referee Scheduling for Youth Sports</div>
+  <h1 class="section-title">Post a Game.<br><span class="hl">Get a Ref. Done.</span></h1>
+  <p class="section-sub">The scheduling app that matches your youth league games with qualified officials nearby — automatically. No texts, no chasing, no uncovered fields.</p>
+  <a href="#waitlist" class="hero-cta">Get Early Access →</a>
+  <div class="hero-note">Now live in Suffolk County, NY — expanding soon.</div>
+  <div class="sport-chips">
+    <div class="sport-chip"><span>⚾</span> Baseball</div>
+    <div class="sport-chip"><span>🥎</span> Softball</div>
+    <div class="sport-chip"><span>🏀</span> Basketball</div>
+    <div class="sport-chip"><span>⚽</span> Soccer</div>
+    <div class="sport-chip"><span>🥍</span> Lacrosse</div>
+    <div class="sport-chip"><span>🏐</span> Volleyball</div>
+  </div>
+
+</section>
+
+<hr class="section-divider">
+
+<section id="leagues" class="reveal">
+  <div class="section-header">
+    <div class="section-eyebrow">For Leagues</div>
+    <h2 class="section-title">Stop Chasing Refs.</h2>
+    <p class="section-sub">One dashboard. <span style="color:var(--teal);font-weight:600;">Every game filled.</span></p>
+  </div>
+  <div class="value-grid">
+    <div>
+      <div class="value-list" style="margin-top:0;">
+        <div class="value-item"><div class="value-icon blue">🎯</div><div><h4>Request or Open Claim</h4><p>Request a specific ref, or open it up and let qualified officials in your area claim the spot.</p></div></div>
+        <div class="value-item"><div class="value-icon blue">🔔</div><div><h4>Real-Time Notifications</h4><p>The moment a ref claims your game, you know. No texts, no follow-up.</p></div></div>
+        <div class="value-item"><div class="value-icon blue">🔍</div><div><h4>Official Search</h4><p>Filter by sport, distance, tier, and cert.</p></div></div>
+        <div class="value-item"><div class="value-icon blue">📊</div><div><h4>Fill Rate Dashboard</h4><p>🟢 Open → 🟡 Pending → 🔵 Filled → ✅ Done.</p></div></div>
+        <div class="value-item"><div class="value-icon blue">🗓️</div><div><h4>Schedule Import</h4><p>SportsEngine, CSV, or manual entry. Season loaded in minutes.</p></div></div>
+      </div>
+
+      <a href="#waitlist" class="value-cta" style="margin-top:20px;">Get Early Access →</a>
+    </div>
+    <div class="section-phone" style="gap:16px;">
+      <div class="phone-frame">
+        <div class="phone-frame-inner">
+          <img src="screenshots/admin-dashboard.png" alt="LeagueOfficials league admin dashboard showing 85% fill rate for East End Youth Hoops with recent basketball games and status filters" loading="lazy">
+        </div>
+      </div>
+      <div class="phone-frame" style="margin-top:40px;">
+        <div class="phone-frame-inner">
+          <img src="screenshots/find-officials.png" alt="LeagueOfficials Find Officials screen showing Gold and Platinum tier referees filtered by sport and distance" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- QR Code callout — full width below grid -->
+  <div style="margin-top:28px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:22px 28px;display:flex;align-items:center;gap:20px;box-sizing:border-box;">
+    <div style="flex-shrink:0;width:64px;height:64px;background:var(--bg);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="16" height="16" rx="2" stroke="#1dd4a8" stroke-width="1.5"/>
+        <rect x="6" y="6" width="8" height="8" fill="#1dd4a8"/>
+        <rect x="26" y="2" width="16" height="16" rx="2" stroke="#1dd4a8" stroke-width="1.5"/>
+        <rect x="30" y="6" width="8" height="8" fill="#1dd4a8"/>
+        <rect x="2" y="26" width="16" height="16" rx="2" stroke="#1dd4a8" stroke-width="1.5"/>
+        <rect x="6" y="30" width="8" height="8" fill="#1dd4a8"/>
+        <rect x="26" y="26" width="4" height="4" fill="#1dd4a8"/>
+        <rect x="32" y="26" width="4" height="4" fill="#1dd4a8"/>
+        <rect x="26" y="32" width="4" height="4" fill="#1dd4a8"/>
+        <rect x="32" y="38" width="4" height="4" fill="#1dd4a8"/>
+        <rect x="38" y="32" width="4" height="4" fill="#1dd4a8"/>
+        <rect x="38" y="38" width="4" height="4" fill="#1dd4a8"/>
+      </svg>
+    </div>
+    <div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:0.95rem;color:var(--white);margin-bottom:4px;">Build your ref pool with one QR code.</div>
+      <div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">Post it at the field or in a team chat. Refs scan and join instantly.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section id="referees" class="reveal">
+  <div class="section-header">
+    <div class="section-eyebrow">For Officials</div>
+    <h2 class="section-title">Get Booked. Get Paid.</h2>
+    <p class="section-sub">Claim games. Direct requests. Your schedule, your call.</p>
+  </div>
+  <div class="value-grid">
+    <div>
+      <div class="value-list" style="margin-top:0;">
+        <div class="value-item"><div class="value-icon teal">📍</div><div><h4>Nearby Game Feed</h4><p>Filtered to your sport and distance. Pay, date, and location on every listing.</p></div></div>
+        <div class="value-item"><div class="value-icon teal">⚡</div><div><h4>Open Claim & Direct Requests</h4><p>Claim open games or get hand-picked by a league that knows your tier.</p></div></div>
+        <div class="value-item"><div class="value-icon teal">🗓️</div><div><h4>My Games Schedule</h4><p>Every assignment in one place — status, pay, and directions to the field.</p></div></div>
+      </div>
+
+      <a href="#waitlist" class="value-cta" style="margin-top:20px;">Get Early Access →</a>
+    </div>
+    <div class="section-phone" style="gap:16px;">
+      <div class="phone-frame">
+        <div class="phone-frame-inner">
+          <img src="screenshots/game-feed.png" alt="LeagueOfficials game marketplace showing open basketball, lacrosse, and baseball games with pay, venue, and Claim button" loading="lazy">
+        </div>
+      </div>
+      <div class="phone-frame" style="margin-top:40px;">
+        <div class="phone-frame-inner">
+          <img src="screenshots/referee-profile.png" alt="LeagueOfficials referee profile for Ryan Mitchell showing Gold tier, 157 games completed, knowledge badges, and mentor availability" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Shareable Profile callout — full width below grid -->
+  <div style="margin-top:28px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:22px 28px;display:flex;align-items:center;gap:20px;box-sizing:border-box;">
+    <div style="flex-shrink:0;width:64px;height:64px;background:var(--bg);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="13" r="7" stroke="#1dd4a8" stroke-width="1.5"/>
+        <path d="M6 34c0-7.732 6.268-14 14-14s14 6.268 14 14" stroke="#1dd4a8" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="26" y="24" width="12" height="14" rx="3" fill="#07090f" stroke="#1dd4a8" stroke-width="1.5"/>
+        <path d="M29 31h6M29 28h6M29 34h4" stroke="#1dd4a8" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div>
+      <div style="font-family:var(--font-head);font-weight:700;font-size:0.95rem;color:var(--white);margin-bottom:4px;">Your credentials. One tap to share.</div>
+      <div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">Tier, sports, certifications, game history — everything a league needs to say yes.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="reveal">
+  <div class="section-header">
+    <div class="section-eyebrow">Rules Database</div>
+    <h2 class="section-title">The Rulebook. Always in Your Pocket.</h2>
+    <p class="section-sub">NFHS rules for all 6 sports. Search by keyword, rule number, or category.</p>
+  </div>
+  <div class="value-grid">
+    <div>
+      <div class="value-list" style="margin-top:0;">
+        <div class="value-item"><div class="value-icon teal">🔍</div><div><h4>Instant Search</h4><p>Find any rule by keyword, rule number, or category — fouls, timing, equipment, definitions.</p></div></div>
+        <div class="value-item"><div class="value-icon amber">✅</div><div><h4>Pass the Quiz. Earn Your Badge.</h4><p>Pass any level — Basics, Proficient, or Master — and it's on your profile for every league to see.</p></div></div>
+        <div class="value-item"><div class="value-icon teal">📖</div><div><h4>Official NFHS Citations</h4><p>Every entry cites the exact rule number and section. Quote any call on the field.</p></div></div>
+      </div>
+      <a href="#waitlist" class="value-cta" style="margin-top:20px;">Get Early Access →</a>
+    </div>
+    <div class="section-phone single">
+      <div class="phone-frame">
+        <div class="phone-frame-inner">
+          <img src="screenshots/training-screen.png" alt="LeagueOfficials Training screen showing Rules Quizzes for all 6 sports with Basics Proficient Master badge levels and Start Continue Complete progress" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section id="students" class="reveal">
+  <div class="section-header">
+    <div class="section-eyebrow">For Student Athletes</div>
+    <h2 class="section-title">Ref Games. Earn Money. Get School Credit.</h2>
+    <p class="section-sub">Real credentials. Real pay. Starting now.</p>
+  </div>
+  <div class="value-grid">
+    <div>
+      <div class="value-list" style="margin-top:0;">
+        <div class="value-item"><div class="value-icon amber">💰</div><div><h4>Pay or Service Credit — Your Choice</h4><p>Cash at student rates, or verified service hours for school credit. Your choice on every game.</p></div></div>
+        <div class="value-item"><div class="value-icon amber">🎓</div><div><h4>Verified Service Log</h4><p>Every hour logged automatically. Export a verified record for your school counselor.</p></div></div>
+        <div class="value-item"><div class="value-icon amber">🤝</div><div><h4>Mentor Match</h4><p>Your first games are paired with a Gold+ official. Learn by doing, not by watching.</p></div></div>
+        <div class="value-item"><div class="value-icon amber">👪</div><div><h4>Parent Dashboard</h4><p>Parents approve the account and see every game, hour, and payment.</p></div></div>
+        <div class="value-item"><div class="value-icon amber">📈</div><div><h4>Milestone Badges</h4><p>First game, 10 games, mentor-ready — every milestone earns a badge.</p></div></div>
+      </div>
+      <a href="#waitlist" class="value-cta">Get Early Access →</a>
+    </div>
+    <div class="section-phone single">
+      <div class="phone-frame">
+        <div class="phone-frame-inner">
+          <img src="screenshots/student-ref.png" alt="LeagueOfficials student referee profile showing Bronze tier, Knowledge Badges, and service hours" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<section id="tiers" class="tiers-section reveal">
+  <div class="section-eyebrow">The Whistle Tier System</div>
+  <h2 class="section-title">Earn Your Tier. Own Your Reputation.</h2>
+  <p class="section-sub" style="margin:0 auto;">Platform-verified. Visible to every league.</p>
+
+  <div class="tiers-sticky-wrap">
+
+    <!-- Sticky left nav -->
+    <nav class="tiers-nav" aria-label="Tier navigation">
+      <button class="tier-nav-btn active" data-tier="bronze" onclick="showTier('bronze',this)">
+        <img class="tier-nav-icon" src="whistle-icon.png" alt="Bronze" style="filter:sepia(1) saturate(2) hue-rotate(-10deg) brightness(0.85)">
+        <span><div class="tier-nav-label">Bronze</div><div class="tier-nav-sub">Starting out</div></span>
+      </button>
+      <button class="tier-nav-btn" data-tier="silver" onclick="showTier('silver',this)">
+        <img class="tier-nav-icon" src="whistle-icon.png" alt="Silver" style="filter:saturate(0) brightness(1.2) contrast(0.9)">
+        <span><div class="tier-nav-label">Silver</div><div class="tier-nav-sub">50 games</div></span>
+      </button>
+      <button class="tier-nav-btn" data-tier="gold" onclick="showTier('gold',this)">
+        <img class="tier-nav-icon" src="whistle-icon.png" alt="Gold" style="filter:sepia(1) saturate(3) hue-rotate(10deg) brightness(1.1)">
+        <span><div class="tier-nav-label">Gold</div><div class="tier-nav-sub">150 games</div></span>
+      </button>
+      <button class="tier-nav-btn" data-tier="platinum" onclick="showTier('platinum',this)">
+        <img class="tier-nav-icon" src="whistle-icon.png" alt="Platinum" style="filter:saturate(0) brightness(1.35) contrast(1.1)">
+        <span><div class="tier-nav-label">Platinum</div><div class="tier-nav-sub">250 games</div></span>
+      </button>
+      <button class="tier-nav-btn" data-tier="diamond" onclick="showTier('diamond',this)">
+        <img class="tier-nav-icon" src="whistle-icon.png" alt="Diamond" style="filter:saturate(0.5) hue-rotate(160deg) brightness(1.2)">
+        <span><div class="tier-nav-label">Diamond</div><div class="tier-nav-sub">500 games</div></span>
+      </button>
+    </nav>
+
+    <!-- Right: detail panels -->
+    <div class="tiers-detail">
+
+      <div class="tier-panel active" data-tier="bronze">
+        <div class="tier-panel-inner">
+          <div class="tier-panel-top">
+            <div class="tier-panel-whistle"><img src="whistle-icon.png" alt="Bronze tier"></div>
+            <div class="tier-panel-heading">
+              <div class="tier-panel-req">Entry Level</div>
+              <div class="tier-panel-name">Bronze</div>
+              <div class="tier-panel-tagline">Learn the rules. Log the reps.</div>
+            </div>
+          </div>
+          <div class="tier-panel-body">
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Games Required</div>
+              <div class="tier-stat-val">0</div>
+              <div class="tier-stat-note">Where everyone starts.</div>
+            </div>
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Next Milestone</div>
+              <div class="tier-stat-val">50 games</div>
+              <div class="tier-stat-note">Reach Silver.</div>
+            </div>
+            <div class="tier-unlock-list">
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Full rulebook access for every sport</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Claim open games immediately</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Complete the NFHS Safety Course to unlock interscholastic games</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Student athletes: log verified service hours toward school credit</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tier-panel" data-tier="silver">
+        <div class="tier-panel-inner">
+          <div class="tier-panel-top">
+            <div class="tier-panel-whistle"><img src="whistle-icon.png" alt="Silver tier"></div>
+            <div class="tier-panel-heading">
+              <div class="tier-panel-req">50 Games Logged</div>
+              <div class="tier-panel-name">Silver</div>
+              <div class="tier-panel-tagline">Field-proven. Leagues start to notice.</div>
+            </div>
+          </div>
+          <div class="tier-panel-body">
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Games Required</div>
+              <div class="tier-stat-val">50</div>
+              <div class="tier-stat-note">Field-tested.</div>
+            </div>
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Next Milestone</div>
+              <div class="tier-stat-val">150 games</div>
+              <div class="tier-stat-note">Reach Gold.</div>
+            </div>
+            <div class="tier-unlock-list">
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Show up in Silver+ league searches</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Knowledge Badges (Basics / Proficient / Master) displayed on your profile</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Priority for direct game requests</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tier-panel" data-tier="gold">
+        <div class="tier-panel-inner">
+          <div class="tier-panel-top">
+            <div class="tier-panel-whistle"><img src="whistle-icon.png" alt="Gold tier"></div>
+            <div class="tier-panel-heading">
+              <div class="tier-panel-req">150 Games Logged</div>
+              <div class="tier-panel-name">Gold</div>
+              <div class="tier-panel-tagline">Trusted to mentor. First pick for leagues.</div>
+            </div>
+          </div>
+          <div class="tier-panel-body">
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Games Required</div>
+              <div class="tier-stat-val">150</div>
+              <div class="tier-stat-note">Leagues take notice.</div>
+            </div>
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Next Milestone</div>
+              <div class="tier-stat-val">250 games</div>
+              <div class="tier-stat-note">Reach Platinum.</div>
+            </div>
+            <div class="tier-unlock-list">
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Eligible to mentor Bronze-tier student athletes</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Gold badge — first in every Gold+ search</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Higher placement in all search results</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tier-panel" data-tier="platinum">
+        <div class="tier-panel-inner">
+          <div class="tier-panel-top">
+            <div class="tier-panel-whistle"><img src="whistle-icon.png" alt="Platinum tier"></div>
+            <div class="tier-panel-heading">
+              <div class="tier-panel-req">250 Games Logged</div>
+              <div class="tier-panel-name">Platinum</div>
+              <div class="tier-panel-tagline">The track record leagues depend on.</div>
+            </div>
+          </div>
+          <div class="tier-panel-body">
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Games Required</div>
+              <div class="tier-stat-val">250</div>
+              <div class="tier-stat-note">The track record leagues trust.</div>
+            </div>
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Next Milestone</div>
+              <div class="tier-stat-val">500 games</div>
+              <div class="tier-stat-note">Reach Diamond.</div>
+            </div>
+            <div class="tier-unlock-list">
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>First in all league searches</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Platinum badge — trusted for high-stakes games</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>First access to playoff and championship postings</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tier-panel" data-tier="diamond">
+        <div class="tier-panel-inner">
+          <div class="tier-panel-top">
+            <div class="tier-panel-whistle"><img src="whistle-icon.png" alt="Diamond tier"></div>
+            <div class="tier-panel-heading">
+              <div class="tier-panel-req">500 Games Logged</div>
+              <div class="tier-panel-name">Diamond</div>
+              <div class="tier-panel-tagline">Elite by every measure.</div>
+            </div>
+          </div>
+          <div class="tier-panel-body">
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Games Required</div>
+              <div class="tier-stat-val">500</div>
+              <div class="tier-stat-note">The highest tier. No shortcuts.</div>
+            </div>
+            <div class="tier-stat-box">
+              <div class="tier-stat-label">Platform Status</div>
+              <div class="tier-stat-val">Elite</div>
+              <div class="tier-stat-note">The most-requested refs on the platform.</div>
+            </div>
+            <div class="tier-unlock-list">
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>First in every search, every tier filter</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Eligible for ambassador and community leadership roles</span></div>
+              <div class="tier-unlock-item"><span class="tier-unlock-check">✦</span><span>Diamond badge — maximum platform visibility</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tier-note">Whistle Tiers reflect games logged on the platform only — separate from NFHS or state certifications, which the app also tracks.</div>
+</section>
+
+
+
+<div style="text-align:center;padding:20px 32px 0;font-family:var(--font-head);font-size:1.05rem;font-weight:700;color:var(--text2);letter-spacing:0.01em;">More games for refs. More refs for leagues.</div>
+
+<section id="waitlist" class="waitlist-section reveal">
+  <div class="waitlist-box">
+    <div class="section-eyebrow">Early Access</div>
+    <h2 class="section-title">Claim Your Spot.</h2>
+    <p class="section-sub" style="margin:0 auto 24px;">First to join. First to go live.</p>
+    <div class="waitlist-role-select">
+      <button class="role-btn" onclick="selectRole(this,'League Admin')">League Admin</button>
+      <button class="role-btn" onclick="selectRole(this,'Official')">Official</button>
+      <button class="role-btn" onclick="selectRole(this,'Student Athlete')">Student Athlete</button>
+    </div>
+
+    <div id="sports-section" style="display:none;">
+      <div class="form-group">
+        <div id="sports-label" class="form-group-label">What sports do you officiate?</div>
+        <div class="form-group-chips">
+          <button class="sport-btn" onclick="toggleSport(this,'baseball')">⚾ Baseball</button>
+          <button class="sport-btn" onclick="toggleSport(this,'basketball')">🏀 Basketball</button>
+          <button class="sport-btn" onclick="toggleSport(this,'softball')">🥎 Softball</button>
+          <button class="sport-btn" onclick="toggleSport(this,'soccer')">⚽ Soccer</button>
+          <button class="sport-btn" onclick="toggleSport(this,'lacrosse')">🥍 Lacrosse</button>
+          <button class="sport-btn" onclick="toggleSport(this,'volleyball')">🏐 Volleyball</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="experience-section" style="display:none;">
+      <div class="form-group">
+        <div class="form-group-label">Experience level</div>
+        <div class="form-group-chips" style="gap:8px;">
+          <button class="exp-btn" onclick="selectExp(this,'new')">New</button>
+          <button class="exp-btn" onclick="selectExp(this,'experienced')">Experienced</button>
+          <button class="exp-btn" onclick="selectExp(this,'certified')">Certified</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="painpoints-section" style="display:none;">
+      <div class="form-group">
+        <div class="form-group-label">What's your biggest challenge?</div>
+        <div class="form-group-chips" style="flex-direction:column;gap:6px;">
+          <button class="pain-btn" onclick="togglePain(this,'not_enough_refs')">Not enough refs in my area</button>
+          <button class="pain-btn" onclick="togglePain(this,'no_show_cancels')">Refs cancel with no notice</button>
+          <button class="pain-btn" onclick="togglePain(this,'manual_process')">Still using texts &amp; spreadsheets</button>
+          <button class="pain-btn" onclick="togglePain(this,'no_visibility')">No way to know who's qualified</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="waitlist-form" style="margin-top:4px;">
+      <div style="display:flex;gap:8px;width:100%;">
+        <div class="waitlist-input-group" style="flex:1;">
+          <label class="waitlist-input-label" for="waitlist-email">Email</label>
+          <input type="email" class="waitlist-input" id="waitlist-email" placeholder="you@example.com">
+        </div>
+        <div class="waitlist-input-group" style="width:100px;">
+          <label class="waitlist-input-label" for="waitlist-zip">ZIP</label>
+          <input type="text" class="waitlist-input" id="waitlist-zip" placeholder="10001" maxlength="5" inputmode="numeric" pattern="[0-9]*">
+        </div>
+      </div>
+      <button class="waitlist-submit" id="waitlist-btn" onclick="submitWaitlist()">Get Early Access →</button>
+    </div>
+    <div class="waitlist-msg" id="waitlist-msg"></div>
+    <div class="waitlist-note">No spam. Just a note when we're ready for you.</div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-brand"><img src="whistle-icon.png" alt="LeagueOfficials"> LeagueOfficials</div>
+  <div class="footer-tagline">More games for refs. More refs for leagues.</div>
+  <div class="footer-links">
+    <a href="/cdn-cgi/l/email-protection#c2a8adb1aaecb0a3b2b2a3b2adb0b682a5afa3abaeeca1adaf">Contact</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="support.html">Support</a>
+  </div>
+  <div class="footer-copy">© 2026 LeagueOfficials. All rights reserved.</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+let selectedRole='';
+let selectedSports=[];
+let selectedExp='';
+let selectedPains=[];
+
+function selectRole(btn,role){
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedRole=role;
+  selectedSports=[];selectedExp='';selectedPains=[];
+  document.querySelectorAll('.sport-btn,.exp-btn,.pain-btn').forEach(b=>b.classList.remove('active'));
+  const isOfficial=role==='Official';
+  const isStudent=role==='Student Athlete';
+  const isLeague=role==='League Admin';
+  document.getElementById('sports-section').style.display=(isOfficial||isStudent||isLeague)?'block':'none';
+  document.getElementById('sports-label').textContent=isStudent?'What sports do you play?':isLeague?'What sports does your league run?':'What sports do you officiate?';
+  document.getElementById('experience-section').style.display=isOfficial?'block':'none';
+  document.getElementById('painpoints-section').style.display=isLeague?'block':'none';
+}
+function toggleSport(btn,sport){
+  btn.classList.toggle('active');
+  if(selectedSports.includes(sport)){selectedSports=selectedSports.filter(s=>s!==sport)}
+  else{selectedSports.push(sport)}
+}
+function selectExp(btn,exp){
+  document.querySelectorAll('.exp-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedExp=exp;
+}
+function togglePain(btn,pain){
+  btn.classList.toggle('active');
+  if(selectedPains.includes(pain)){selectedPains=selectedPains.filter(p=>p!==pain)}
+  else{selectedPains.push(pain)}
+}
+
+async function submitWaitlist(){
+  const emailInput=document.getElementById('waitlist-email'),zipInput=document.getElementById('waitlist-zip'),btn=document.getElementById('waitlist-btn'),msg=document.getElementById('waitlist-msg');
+  const email=emailInput.value.trim(),zip=zipInput.value.trim();
+  if(!email||!email.includes('@')){msg.style.display='block';msg.style.color='#EF4444';msg.textContent='Please enter a valid email address.';return}
+  btn.textContent='Joining...';btn.style.opacity='0.7';btn.style.pointerEvents='none';
+  try{
+    const body={email};
+    if(selectedRole)body.role=selectedRole;
+    if(zip)body.zip_code=zip;
+    if(selectedSports.length)body.sports=selectedSports;
+    if(selectedExp)body.experience=selectedExp;
+    if(selectedPains.length)body.pain_points=selectedPains;
+    const response=await fetch('https://qknocijyywglylrqmkyt.supabase.co/functions/v1/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(response.ok){msg.style.display='block';msg.style.color='#10B981';msg.textContent="\u2705 You're in! We'll reach out when we're live in your area.";
+      document.querySelector('.waitlist-box').querySelectorAll('.waitlist-role-select,.waitlist-form,#sports-section,#experience-section,#painpoints-section').forEach(el=>el.style.display='none');
+    } else{throw new Error('API error')}
+  }catch(err){btn.textContent='Get Early Access \u2192';btn.style.opacity='1';btn.style.pointerEvents='auto';msg.style.display='block';msg.style.color='#EF4444';msg.textContent='Something went wrong. Please try again.'}
+}
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>{document.querySelector('.nav-links').classList.remove('open');document.querySelector('.hamburger').classList.remove('active')}));
+document.getElementById('waitlist-email').addEventListener('keydown',(e)=>{if(e.key==='Enter')submitWaitlist()});
+
+function showTier(tier, btn) {
+  document.querySelectorAll('.tier-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tier-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector('.tier-panel[data-tier="'+tier+'"]').classList.add('active');
+}
+</script>
+</body>
+</html>

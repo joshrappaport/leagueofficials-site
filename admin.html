@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeagueOfficials — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--surface:#0f1117;--surface2:#151820;--border:#1e2330;
+  --teal:#1dd4a8;--teal-dim:rgba(29,212,168,.12);
+  --white:#f0f4ff;--text2:#8892a4;--text3:#4a5568;
+  --red:#f56565;--red-dim:rgba(245,101,101,.12);
+  --amber:#f0b429;--amber-dim:rgba(240,180,41,.12);
+  --blue:#63b3ed;--blue-dim:rgba(99,179,237,.12);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:var(--font-body);font-size:14px;min-height:100vh;display:flex}
+
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;width:100%;min-height:100vh}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:380px}
+.login-logo{font-family:var(--font-head);font-size:1.3rem;font-weight:800;color:var(--white);margin-bottom:6px}
+.login-logo span{color:var(--teal)}
+.login-sub{color:var(--text2);font-size:0.82rem;margin-bottom:28px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:0.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--white);font-family:var(--font-body);font-size:0.9rem;outline:none;transition:.2s}
+.field input:focus{border-color:var(--teal)}
+.btn-primary{width:100%;background:var(--teal);color:#07090f;font-family:var(--font-head);font-weight:700;font-size:0.85rem;letter-spacing:.06em;text-transform:uppercase;border:none;border-radius:10px;padding:13px;cursor:pointer;transition:.2s}
+.btn-primary:hover{opacity:.88}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+#login-error{color:var(--red);font-size:0.8rem;margin-top:12px;display:none}
+
+/* ── APP SHELL ── */
+#app{display:none;width:100%;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:24px 20px 16px;font-family:var(--font-head);font-size:1rem;font-weight:800;border-bottom:1px solid var(--border)}
+.sidebar-logo span{color:var(--teal)}
+.sidebar-tag{display:inline-block;background:var(--teal-dim);color:var(--teal);font-size:0.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:4px;padding:2px 6px;margin-left:6px;vertical-align:middle}
+nav{padding:12px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;color:var(--text2);font-weight:500;border-radius:0;transition:.15s;border-left:2px solid transparent}
+.nav-item:hover{color:var(--white);background:var(--surface2)}
+.nav-item.active{color:var(--teal);background:var(--teal-dim);border-left-color:var(--teal)}
+.nav-icon{font-size:1rem;width:20px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--teal);color:#07090f;font-size:0.65rem;font-weight:700;border-radius:10px;padding:1px 7px}
+.sidebar-user{padding:16px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;background:var(--teal-dim);border:1px solid var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--teal);font-weight:700;font-size:.8rem;flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-email{font-size:.72rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logout-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.72rem;padding:0;margin-top:2px;display:block;text-align:left}
+.logout-btn:hover{color:var(--red)}
+
+/* ── MAIN CONTENT ── */
+.main{margin-left:220px;flex:1;padding:32px 36px;min-height:100vh}
+.page-header{margin-bottom:28px}
+.page-title{font-family:var(--font-head);font-size:1.5rem;font-weight:800;margin-bottom:4px}
+.page-sub{color:var(--text2);font-size:.85rem}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.stat-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.stat-value{font-family:var(--font-head);font-size:1.8rem;font-weight:800;color:var(--white)}
+.stat-sub{font-size:.72rem;color:var(--text2);margin-top:4px}
+.stat-card.teal .stat-value{color:var(--teal)}
+.stat-card.amber .stat-value{color:var(--amber)}
+.stat-card.blue .stat-value{color:var(--blue)}
+
+/* ── SECTION GRID ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+.panel-title{font-family:var(--font-head);font-size:.85rem;font-weight:700;margin-bottom:16px;color:var(--text2);text-transform:uppercase;letter-spacing:.08em}
+
+/* ── TIER BAR ── */
+.tier-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tier-name{width:64px;font-size:.8rem;font-weight:600;text-transform:capitalize}
+.tier-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:6px;overflow:hidden}
+.tier-bar{height:6px;border-radius:4px}
+.tier-count{width:28px;text-align:right;font-size:.8rem;color:var(--text2)}
+.bronze .tier-bar{background:#cd7f32}.silver .tier-bar{background:#a0aec0}
+.gold .tier-bar{background:#f0b429}.platinum .tier-bar{background:#e2e8f0}
+.diamond .tier-bar{background:var(--blue)}
+.bronze .tier-name{color:#cd7f32}.silver .tier-name{color:#a0aec0}
+.gold .tier-name{color:#f0b429}.platinum .tier-name{color:#e2e8f0}
+.diamond .tier-name{color:var(--blue)}
+
+/* ── GAME STATUS ── */
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.status-row:last-child{border-bottom:none}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:8px}
+.status-label{display:flex;align-items:center;font-size:.85rem}
+.status-val{font-weight:700;font-size:.9rem}
+
+/* ── TABLES ── */
+.table-controls{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--white);font-family:var(--font-body);font-size:.85rem;outline:none;width:240px;transition:.2s}
+.search-input:focus{border-color:var(--teal)}
+.filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--white);font-family:var(--font-body);font-size:.85rem;outline:none;cursor:pointer}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:0 12px 10px 0;text-align:left;white-space:nowrap}
+td{padding:10px 12px 10px 0;border-top:1px solid var(--border);font-size:.85rem;vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── BADGES ── */
+.badge{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:2px 8px}
+.action-btn{border:none;border-radius:6px;padding:4px 12px;font-size:.75rem;font-weight:600;cursor:pointer;transition:.15s}
+.approve-btn{background:var(--teal-dim);color:var(--teal)}.approve-btn:hover{opacity:.8}
+.reject-btn{background:var(--red-dim);color:var(--red);margin-left:6px}.reject-btn:hover{opacity:.8}
+.badge-active{background:rgba(29,212,168,.15);color:var(--teal)}
+.badge-suspended{background:var(--red-dim);color:var(--red)}
+.badge-referee{background:var(--teal-dim);color:var(--teal)}
+.badge-admin{background:var(--amber-dim);color:var(--amber)}
+.badge-league_admin{background:var(--blue-dim);color:var(--blue)}
+.badge-bronze{background:rgba(205,127,50,.15);color:#cd7f32}
+.badge-silver{background:rgba(160,174,192,.15);color:#a0aec0}
+.badge-gold{background:rgba(240,180,41,.15);color:#f0b429}
+.badge-platinum{background:rgba(226,232,240,.15);color:#e2e8f0}
+.badge-diamond{background:var(--blue-dim);color:var(--blue)}
+
+/* ── ACTION BUTTONS ── */
+.btn-sm{font-size:.72rem;font-weight:600;border-radius:6px;padding:4px 10px;cursor:pointer;border:1px solid;transition:.15s;font-family:var(--font-body)}
+.btn-danger{background:transparent;border-color:var(--red);color:var(--red)}
+.btn-danger:hover{background:var(--red-dim)}
+.btn-success{background:transparent;border-color:var(--teal);color:var(--teal)}
+.btn-success:hover{background:var(--teal-dim)}
+.btn-copy{background:transparent;border-color:var(--border);color:var(--text2)}
+.btn-copy:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ── LEAGUE CARDS ── */
+.league-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.league-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+.league-name{font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:4px}
+.league-meta{font-size:.78rem;color:var(--text2);margin-bottom:16px}
+.league-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.league-stat{background:var(--surface2);border-radius:8px;padding:10px 12px;text-align:center}
+.league-stat-val{font-family:var(--font-head);font-size:1.1rem;font-weight:700}
+.league-stat-label{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.fill-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:14px;overflow:hidden}
+.fill-bar-inner{height:4px;background:var(--teal);border-radius:2px;transition:.6s}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;opacity:.4}
+.empty-text{font-size:.9rem}
+
+/* ── LOADING ── */
+.loading{color:var(--text3);font-size:.85rem;padding:24px 0}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--teal);border-radius:10px;padding:12px 18px;color:var(--teal);font-size:.82rem;font-weight:500;transform:translateY(80px);opacity:0;transition:.3s;z-index:999;pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">League<span>Officials</span></div>
+    <div class="login-sub">Platform Admin Dashboard</div>
+    <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="admin@email.com" autocomplete="email"></div>
+    <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">League<span>Officials</span><span class="sidebar-tag">Admin</span></div>
+    <nav>
+      <div class="nav-item active" onclick="navigate('overview')" id="nav-overview"><span class="nav-icon">📊</span> Overview</div>
+      <div class="nav-item" onclick="navigate('waitlist')" id="nav-waitlist"><span class="nav-icon">📋</span> Waitlist <span class="nav-badge" id="wl-badge">0</span></div>
+      <div class="nav-item" onclick="navigate('users')" id="nav-users"><span class="nav-icon">👤</span> Users</div>
+      <div class="nav-item" onclick="navigate('leagues')" id="nav-leagues"><span class="nav-icon">🏟️</span> Leagues</div>
+      <div class="nav-item" onclick="navigate('reports')" id="nav-reports"><span class="nav-icon">🚩</span> Reports</div>
+      <div class="nav-item" onclick="navigate('withdrawals')" id="nav-withdrawals"><span class="nav-icon">⚠️</span> Withdrawals</div>
+      <div class="nav-item" onclick="navigate('certifications')" id="nav-certifications"><span class="nav-icon">📜</span> Certifications <span class="nav-badge" id="cert-badge" style="display:none">0</span></div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-initials">J</div>
+      <div class="user-info">
+        <div class="user-email" id="user-email-display">—</div>
+        <button class="logout-btn" onclick="doLogout()">Sign out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- OVERVIEW -->
+    <div id="sec-overview">
+      <div class="page-header"><div class="page-title">Overview</div><div class="page-sub">Platform health at a glance</div></div>
+      <div class="stat-grid" id="stat-grid"><div class="loading">Loading stats…</div></div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-title">Game Status</div><div id="game-status-panel"><div class="loading">Loading…</div></div></div>
+        <div class="panel"><div class="panel-title">Official Tiers</div><div id="tier-panel"><div class="loading">Loading…</div></div></div>
+      </div>
+      <div class="panel"><div class="panel-title">Recent Signups</div><div id="recent-users-panel"><div class="loading">Loading…</div></div></div>
+    </div>
+
+    <!-- WAITLIST -->
+    <div id="sec-waitlist" style="display:none">
+      <div class="page-header"><div class="page-title">Waitlist</div><div class="page-sub">Pre-launch signups — click Invite to copy an email template</div></div>
+      <div id="waitlist-content"><div class="loading">Loading…</div></div>
+    </div>
+
+    <!-- USERS -->
+    <div id="sec-users" style="display:none">
+      <div class="page-header"><div class="page-title">Users</div><div class="page-sub">All registered accounts</div></div>
+      <div class="table-controls">
+        <input class="search-input" type="text" id="user-search" placeholder="Search name or email…" oninput="filterUsers()">
+        <select class="filter-select" id="role-filter" onchange="filterUsers()">
+          <option value="">All roles</option>
+          <option value="referee">Officials</option>
+          <option value="league_admin">League Admins</option>
+          <option value="admin">Platform Admin</option>
+        </select>
+        <select class="filter-select" id="status-filter" onchange="filterUsers()">
+          <option value="">All statuses</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
+        </select>
+      </div>
+      <div id="users-content"><div class="loading">Loading…</div></div>
+    </div>
+
+    <!-- LEAGUES -->
+    <div id="sec-leagues" style="display:none">
+      <div class="page-header"><div class="page-title">Leagues</div><div class="page-sub">All active leagues on the platform</div></div>
+      <div id="leagues-content"><div class="loading">Loading…</div></div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="sec-reports" style="display:none">
+      <div class="page-header"><div class="page-title">Reports</div><div class="page-sub">Post-game incident and conduct reports</div></div>
+      <div id="reports-content"><div class="loading">Loading…</div></div>
+    </div>
+
+    <!-- CERTIFICATIONS -->
+    <div id="sec-certifications" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Certificate Submissions</div>
+        <div class="page-sub">Officials' uploaded NFHS certificates awaiting verification — approve to add to their profile</div>
+      </div>
+      <div class="table-controls">
+        <select class="filter-select" id="cert-status-filter" onchange="filterCertifications()">
+          <option value="pending">Pending</option>
+          <option value="verified">Verified</option>
+          <option value="rejected">Rejected</option>
+          <option value="">All</option>
+        </select>
+      </div>
+      <div id="certifications-content"><div class="loading">Loading…</div></div>
+    </div>
+
+    <!-- WITHDRAWALS -->
+    <div id="sec-withdrawals" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Withdrawal History</div>
+        <div class="page-sub">Refs who dropped an accepted game, or bailed on an open claim within 1 hour</div>
+      </div>
+      <div class="table-controls">
+        <input class="search-input" type="text" id="wd-search" placeholder="Search ref name…" oninput="filterWithdrawals()">
+        <select class="filter-select" id="wd-status-filter" onchange="filterWithdrawals()">
+          <option value="">All types</option>
+          <option value="accepted">Dropped accepted game</option>
+          <option value="applied">Quick bail (< 1 hr claim)</option>
+        </select>
+        <select class="filter-select" id="wd-sport-filter" onchange="filterWithdrawals()">
+          <option value="">All sports</option>
+          <option value="basketball">Basketball</option>
+          <option value="soccer">Soccer</option>
+          <option value="baseball">Baseball</option>
+          <option value="softball">Softball</option>
+          <option value="lacrosse">Lacrosse</option>
+          <option value="volleyball">Volleyball</option>
+        </select>
+      </div>
+      <div id="withdrawals-content"><div class="loading">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast">✓ Copied to clipboard</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://qknocijyywglylrqmkyt.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrbm9jaWp5eXdnbHlscnFta3l0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MDUyOTUsImV4cCI6MjA4NzE4MTI5NX0.YRbE3BM91hqf_lsYJbRClKIUFU42iINBudSP2XHVYro';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+let allUsers = [];
+let currentSection = 'overview';
+
+// ── SECURITY HELPERS ──
+// HTML-escape any value before inserting into innerHTML.
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+// JS-string-escape a value for use inside a single-quoted onclick attribute.
+function jsEsc(str) {
+  return String(str ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+// ── AUTH ──
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const btn   = document.getElementById('login-btn');
+  const err   = document.getElementById('login-error');
+  err.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Signing in…';
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    err.textContent = error.message; err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Sign In'; return;
+  }
+
+  // Gate on app_metadata.role — set by service role, not mutable by regular users.
+  // Do NOT gate on public.users.role alone (that column could be self-modified via RLS).
+  const appRole = data.user.app_metadata?.role;
+  if (appRole !== 'admin') {
+    await sb.auth.signOut();
+    err.textContent = 'Access denied — admin accounts only.'; err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Sign In'; return;
+  }
+
+  // Only fetch public.users for display info, after the gate passes.
+  const { data: userRow } = await sb.from('users').select('full_name,email').eq('id', data.user.id).single();
+  document.getElementById('user-email-display').textContent = userRow?.email || email;
+  const initials = (userRow?.full_name||email).split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('user-initials').textContent = initials;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  loadAll();
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+// Check existing session on load
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    // Same app_metadata gate as doLogin() — checked against the session token directly.
+    if (session.user.app_metadata?.role === 'admin') {
+      const { data: userRow } = await sb.from('users').select('full_name,email').eq('id', session.user.id).single();
+      document.getElementById('user-email-display').textContent = userRow?.email || session.user.email;
+      const initials = (userRow?.full_name||userRow?.email||'A').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('user-initials').textContent = initials;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      loadAll();
+    }
+  }
+})();
+
+// ── NAVIGATION ──
+function navigate(section) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('nav-'+section).classList.add('active');
+  ['overview','waitlist','users','leagues','reports','withdrawals','certifications'].forEach(s => {
+    document.getElementById('sec-'+s).style.display = s===section ? '' : 'none';
+  });
+  currentSection = section;
+}
+
+// ── LOAD ALL ──
+async function loadAll() {
+  loadOverview();
+  loadWaitlist();
+  loadUsers();
+  loadLeagues();
+  loadReports();
+  loadWithdrawals();
+  loadCertifications();
+}
+
+// ── OVERVIEW ──
+async function loadOverview() {
+  const [
+    { count: totalUsers },
+    { count: officials },
+    { count: leagueAdmins },
+    { count: leagues },
+    { data: games },
+    { count: waitlistCount },
+    { count: quizAttempts },
+    { data: recentUsers }
+  ] = await Promise.all([
+    sb.from('users').select('*', {count:'exact',head:true}),
+    sb.from('users').select('*', {count:'exact',head:true}).eq('role','referee'),
+    sb.from('users').select('*', {count:'exact',head:true}).eq('role','league_admin'),
+    sb.from('leagues').select('*', {count:'exact',head:true}),
+    sb.from('games').select('status'),
+    sb.from('waitlist').select('*', {count:'exact',head:true}),
+    sb.from('quiz_attempts').select('*', {count:'exact',head:true}),
+    sb.from('users').select('full_name,email,role,created_at').order('created_at',{ascending:false}).limit(5)
+  ]);
+
+  // Game breakdown
+  const open = games?.filter(g=>g.status==='open').length||0;
+  const filled = games?.filter(g=>g.status==='filled').length||0;
+  const completed = games?.filter(g=>g.status==='completed').length||0;
+  const total = games?.length||0;
+  const fillRate = total ? Math.round((filled+completed)/total*100) : 0;
+
+  // Waitlist badge
+  document.getElementById('wl-badge').textContent = waitlistCount||0;
+
+  // Stat cards
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-card teal"><div class="stat-label">Fill Rate</div><div class="stat-value">${fillRate}%</div><div class="stat-sub">${filled+completed} of ${total} games covered</div></div>
+    <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value">${totalUsers}</div><div class="stat-sub">${officials} officials · ${leagueAdmins} admins</div></div>
+    <div class="stat-card"><div class="stat-label">Leagues</div><div class="stat-value">${leagues}</div><div class="stat-sub">Active on platform</div></div>
+    <div class="stat-card"><div class="stat-label">Total Games</div><div class="stat-value">${total}</div><div class="stat-sub">Across all leagues</div></div>
+    <div class="stat-card amber"><div class="stat-label">Open Games</div><div class="stat-value">${open}</div><div class="stat-sub">Need a ref</div></div>
+    <div class="stat-card blue"><div class="stat-label">Waitlist</div><div class="stat-value">${waitlistCount}</div><div class="stat-sub">Pre-launch signups</div></div>
+    <div class="stat-card"><div class="stat-label">Quiz Attempts</div><div class="stat-value">${quizAttempts}</div><div class="stat-sub">Across all sports</div></div>
+  `;
+
+  // Game status panel
+  document.getElementById('game-status-panel').innerHTML = `
+    <div class="status-row"><div class="status-label"><div class="status-dot" style="background:#f0b429"></div>Open</div><div class="status-val" style="color:#f0b429">${open}</div></div>
+    <div class="status-row"><div class="status-label"><div class="status-dot" style="background:#63b3ed"></div>Filled</div><div class="status-val" style="color:#63b3ed">${filled}</div></div>
+    <div class="status-row"><div class="status-label"><div class="status-dot" style="background:#1dd4a8"></div>Completed</div><div class="status-val" style="color:#1dd4a8">${completed}</div></div>
+    <div class="status-row"><div class="status-label"><div class="status-dot" style="background:#4a5568"></div>Cancelled</div><div class="status-val" style="color:#4a5568">${games?.filter(g=>g.status==='cancelled').length||0}</div></div>
+  `;
+
+  // Tier distribution
+  const { data: tiers } = await sb.from('officials').select('tier');
+  const tierCounts = {bronze:0,silver:0,gold:0,platinum:0,diamond:0};
+  tiers?.forEach(t => { if(tierCounts[t.tier]!==undefined) tierCounts[t.tier]++; });
+  const maxTier = Math.max(...Object.values(tierCounts), 1);
+  document.getElementById('tier-panel').innerHTML = Object.entries(tierCounts).map(([tier,count]) => `
+    <div class="tier-row ${tier}">
+      <div class="tier-name">${tier.charAt(0).toUpperCase()+tier.slice(1)}</div>
+      <div class="tier-bar-wrap"><div class="tier-bar" style="width:${Math.round(count/maxTier*100)}%"></div></div>
+      <div class="tier-count">${count}</div>
+    </div>`).join('');
+
+  // Recent users
+  document.getElementById('recent-users-panel').innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr><th>Name / Email</th><th>Role</th><th>Joined</th></tr></thead>
+      <tbody>${(recentUsers||[]).map(u => `
+        <tr>
+          <td><div style="font-weight:500">${esc(u.full_name||'—')}</div><div style="color:var(--text2);font-size:.78rem">${esc(u.email)}</div></td>
+          <td><span class="badge badge-${esc(u.role)}">${esc(roleLabel(u.role))}</span></td>
+          <td style="color:var(--text2)">${fmtDate(u.created_at)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// ── WAITLIST ──
+async function loadWaitlist() {
+  const { data, error } = await sb.from('waitlist').select('*').order('created_at',{ascending:false});
+  if (error || !data?.length) {
+    document.getElementById('waitlist-content').innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No waitlist signups yet.</div></div>';
+    return;
+  }
+  document.getElementById('wl-badge').textContent = data.length;
+  document.getElementById('waitlist-content').innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr><th>Email</th><th>Role</th><th>Zip</th><th>Pain Points</th><th>Joined</th><th>Action</th></tr></thead>
+      <tbody>${data.map(w => `
+        <tr>
+          <td style="font-weight:500">${esc(w.email)}</td>
+          <td><span class="badge badge-${esc((w.role||'').toLowerCase().replace(' ','_'))}">${esc(w.role||'—')}</span></td>
+          <td>${esc(w.zip_code||'—')}</td>
+          <td style="color:var(--text2);font-size:.78rem;max-width:220px">${esc((w.pain_points||[]).join(', ')||'—')}</td>
+          <td style="color:var(--text2)">${fmtDate(w.created_at)}</td>
+          <td><button class="btn-sm btn-copy" onclick="copyInvite('${jsEsc(w.email)}','${jsEsc(w.role||'')}')">✉ Invite</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+function copyInvite(email, role) {
+  const subject = `You're on the LeagueOfficials early access list`;
+  const body = `Hi,\n\nThanks for signing up for LeagueOfficials early access — we're almost ready to go live in Suffolk County.\n\nWe'll be in touch very soon with your invite link.\n\nBest,\nJosh\nLeagueOfficials`;
+  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  navigator.clipboard.writeText(`To: ${email}\nSubject: ${subject}\n\n${body}`).catch(()=>{});
+  window.open(mailto);
+  showToast('✉ Invite email opened');
+}
+
+// ── USERS ──
+async function loadUsers() {
+  const { data } = await sb.from('users').select('id,full_name,email,role,status,created_at').order('created_at',{ascending:false});
+  const { data: officials } = await sb.from('officials').select('user_id,tier,games_completed_count,is_student');
+  const officialMap = {};
+  officials?.forEach(o => { officialMap[o.user_id] = o; });
+  allUsers = (data||[]).map(u => ({...u, official: officialMap[u.id]||null}));
+  renderUsers(allUsers);
+}
+
+function filterUsers() {
+  const q     = document.getElementById('user-search').value.toLowerCase();
+  const role  = document.getElementById('role-filter').value;
+  const status= document.getElementById('status-filter').value;
+  const filtered = allUsers.filter(u => {
+    const matchQ   = !q || (u.email||'').toLowerCase().includes(q) || (u.full_name||'').toLowerCase().includes(q);
+    const matchR   = !role || u.role === role;
+    const matchS   = !status || u.status === status;
+    return matchQ && matchR && matchS;
+  });
+  renderUsers(filtered);
+}
+
+function renderUsers(users) {
+  if (!users.length) {
+    document.getElementById('users-content').innerHTML = '<div class="empty"><div class="empty-icon">👤</div><div class="empty-text">No users match your filters.</div></div>';
+    return;
+  }
+  document.getElementById('users-content').innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr><th>Name / Email</th><th>Role</th><th>Tier</th><th>Games</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>${users.map(u => `
+        <tr id="user-row-${u.id}">
+          <td>
+            <div style="font-weight:500">${esc(u.full_name||'—')}${u.official?.is_student?' <span style="font-size:.65rem;color:var(--amber)" title="Student athlete">★</span>':''}</div>
+            <div style="color:var(--text2);font-size:.78rem">${esc(u.email)}</div>
+          </td>
+          <td><span class="badge badge-${esc(u.role)}">${esc(roleLabel(u.role))}</span></td>
+          <td>${u.official ? `<span class="badge badge-${esc(u.official.tier)}">${esc(u.official.tier)}</span>` : '—'}</td>
+          <td style="color:var(--text2)">${u.official ? u.official.games_completed_count : '—'}</td>
+          <td><span class="badge ${u.status==='active'?'badge-active':'badge-suspended'}">${esc(u.status||'active')}</span></td>
+          <td style="color:var(--text2)">${fmtDate(u.created_at)}</td>
+          <td>
+            ${u.role !== 'admin' ? (
+              u.status === 'suspended'
+                ? `<button class="btn-sm btn-success" onclick="setUserStatus('${u.id}','active')">Reactivate</button>`
+                : `<button class="btn-sm btn-danger" onclick="setUserStatus('${u.id}','suspended')">Suspend</button>`
+            ) : '—'}
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+async function setUserStatus(id, status) {
+  const { error } = await sb.from('users').update({status}).eq('id', id);
+  if (error) { showToast('❌ Error: ' + error.message); return; }
+  const user = allUsers.find(u => u.id === id);
+  if (user) user.status = status;
+  filterUsers();
+  showToast(status === 'suspended' ? '⛔ User suspended' : '✓ User reactivated');
+}
+
+// ── LEAGUES ──
+async function loadLeagues() {
+  const { data: leagues } = await sb.from('leagues').select('id,name,zip_code,sports,status');
+  const { data: games } = await sb.from('games').select('league_id,status');
+  const { data: admins } = await sb.from('league_admins').select('league_id,user_id');
+  const { data: adminUsers } = await sb.from('users').select('id,email,full_name');
+
+  const userMap = {};
+  adminUsers?.forEach(u => { userMap[u.id] = u; });
+
+  const leagueAdminMap = {};
+  admins?.forEach(a => {
+    if (!leagueAdminMap[a.league_id]) leagueAdminMap[a.league_id] = [];
+    const u = userMap[a.user_id];
+    if (u) leagueAdminMap[a.league_id].push(u.email);
+  });
+
+  if (!leagues?.length) {
+    document.getElementById('leagues-content').innerHTML = '<div class="empty"><div class="empty-icon">🏟️</div><div class="empty-text">No leagues yet.</div></div>';
+    return;
+  }
+
+  document.getElementById('leagues-content').innerHTML = `<div class="league-grid">${leagues.map(l => {
+    const lg = games?.filter(g => g.league_id === l.id) || [];
+    const total = lg.length;
+    const covered = lg.filter(g => ['filled','completed'].includes(g.status)).length;
+    const open = lg.filter(g => g.status==='open').length;
+    const fillPct = total ? Math.round(covered/total*100) : 0;
+    const adminEmails = (leagueAdminMap[l.id]||[]).join(', ') || '—';
+    const sports = (l.sports||[]).map(s => s.charAt(0).toUpperCase()+s.slice(1)).join(', ');
+    return `
+      <div class="league-card">
+        <div class="league-name">${esc(l.name)}</div>
+        <div class="league-meta">${esc(sports)} · ZIP ${esc(l.zip_code||'—')}<br><span style="color:var(--text3)">${esc(adminEmails)}</span></div>
+        <div class="league-stats">
+          <div class="league-stat"><div class="league-stat-val">${total}</div><div class="league-stat-label">Games</div></div>
+          <div class="league-stat"><div class="league-stat-val" style="color:var(--teal)">${fillPct}%</div><div class="league-stat-label">Fill Rate</div></div>
+          <div class="league-stat"><div class="league-stat-val" style="color:${open>0?'#f0b429':'var(--text3)'}">${open}</div><div class="league-stat-label">Open</div></div>
+        </div>
+        <div class="fill-bar"><div class="fill-bar-inner" style="width:${fillPct}%"></div></div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+// ── REPORTS ──
+async function loadReports() {
+  const { data } = await sb.from('game_reports').select('id,report_type,notes,reporter_role,created_at').order('created_at',{ascending:false});
+  if (!data?.length) {
+    document.getElementById('reports-content').innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No reports filed yet.</div></div>';
+    return;
+  }
+  document.getElementById('reports-content').innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr><th>Type</th><th>Filed By</th><th>Notes</th><th>Date</th></tr></thead>
+      <tbody>${data.map(r => `
+        <tr>
+          <td><span class="badge badge-suspended">${esc(r.report_type)}</span></td>
+          <td>${esc(r.reporter_role||'—')}</td>
+          <td style="color:var(--text2);max-width:320px">${esc(r.notes||'—')}</td>
+          <td style="color:var(--text2)">${fmtDate(r.created_at)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// ── WITHDRAWALS ──
+let allWithdrawals = [];
+
+async function loadWithdrawals() {
+  const { data, error } = await sb
+    .from('assignment_withdrawal_log')
+    .select('*, official:officials(full_name, tier, user_id)')
+    .order('withdrawn_at', { ascending: false })
+    .limit(200);
+
+  if (error) {
+    document.getElementById('withdrawals-content').innerHTML =
+      '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Error loading withdrawal log.</div></div>';
+    return;
+  }
+
+  allWithdrawals = data || [];
+  renderWithdrawals(allWithdrawals);
+}
+
+function filterWithdrawals() {
+  const q      = document.getElementById('wd-search').value.toLowerCase();
+  const status = document.getElementById('wd-status-filter').value;
+  const sport  = document.getElementById('wd-sport-filter').value;
+  const filtered = allWithdrawals.filter(w => {
+    const name = (w.official?.full_name || '').toLowerCase();
+    const matchQ = !q || name.includes(q);
+    const matchS = !status || w.prior_status === status;
+    const matchSp = !sport || w.game_sport === sport;
+    return matchQ && matchS && matchSp;
+  });
+  renderWithdrawals(filtered);
+}
+
+function renderWithdrawals(rows) {
+  if (!rows.length) {
+    document.getElementById('withdrawals-content').innerHTML =
+      '<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No qualifying withdrawals on record.</div></div>';
+    return;
+  }
+
+  // Build per-official summary counts
+  const officialCounts = {};
+  rows.forEach(w => {
+    const key = w.official_id;
+    if (key) officialCounts[key] = (officialCounts[key] || 0) + 1;
+  });
+
+  document.getElementById('withdrawals-content').innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>Official</th>
+        <th>Tier</th>
+        <th>Type</th>
+        <th>Sport</th>
+        <th>Game Date</th>
+        <th>Held (min)</th>
+        <th>Withdrawn At</th>
+        <th>Total Withdrawals</th>
+      </tr></thead>
+      <tbody>${rows.map(w => {
+        const isAccepted = w.prior_status === 'accepted';
+        const typeLabel  = isAccepted ? 'Dropped Accepted' : 'Quick Bail';
+        const typeBadge  = isAccepted
+          ? '<span class="badge badge-suspended">Dropped Accepted</span>'
+          : '<span class="badge" style="background:var(--amber-dim);color:var(--amber)">Quick Bail</span>';
+        const tier = w.official?.tier || '—';
+        const totalForRef = officialCounts[w.official_id] || 1;
+        const totalBadge  = totalForRef >= 3
+          ? `<span class="badge badge-suspended">${totalForRef}</span>`
+          : `<span style="color:var(--text2)">${totalForRef}</span>`;
+        const sport = w.game_sport
+          ? esc(w.game_sport.charAt(0).toUpperCase() + w.game_sport.slice(1))
+          : '—';
+        const gameDate = w.game_date
+          ? new Date(w.game_date + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+          : '—';
+        const heldMin = w.minutes_held != null
+          ? (w.minutes_held < 1 ? '<1' : Math.round(w.minutes_held))
+          : '—';
+        return `<tr>
+          <td>
+            <div style="font-weight:500">${esc(w.official?.full_name || 'Unknown')}</div>
+          </td>
+          <td>${tier !== '—' ? `<span class="badge badge-${esc(tier)}">${esc(tier)}</span>` : '—'}</td>
+          <td>${typeBadge}</td>
+          <td style="color:var(--text2)">${sport}</td>
+          <td style="color:var(--text2)">${gameDate}</td>
+          <td style="color:var(--text2)">${heldMin}</td>
+          <td style="color:var(--text2)">${fmtDate(w.withdrawn_at)}</td>
+          <td style="text-align:center">${totalBadge}</td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// ── CERTIFICATIONS ──
+let allCertifications = [];
+
+async function loadCertifications() {
+  const { data, error } = await sb
+    .from('certificate_submissions')
+    .select(`
+      id, cert_type, file_path, status, submitted_at, notes,
+      official:officials(id, full_name, tier),
+      reviewer:reviewed_by(email)
+    `)
+    .order('submitted_at', { ascending: false });
+
+  if (error) {
+    document.getElementById('certifications-content').innerHTML =
+      '<div class="empty"><div class="empty-text">Error loading certifications.</div></div>';
+    return;
+  }
+
+  allCertifications = data || [];
+
+  // Update badge with pending count
+  const pending = allCertifications.filter(c => c.status === 'pending').length;
+  const badge = document.getElementById('cert-badge');
+  if (pending > 0) { badge.textContent = pending; badge.style.display = ''; }
+  else { badge.style.display = 'none'; }
+
+  filterCertifications();
+}
+
+function filterCertifications() {
+  const statusFilter = document.getElementById('cert-status-filter').value;
+  const filtered = statusFilter
+    ? allCertifications.filter(c => c.status === statusFilter)
+    : allCertifications;
+  renderCertifications(filtered);
+}
+
+function renderCertifications(rows) {
+  const el = document.getElementById('certifications-content');
+  if (!rows.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📜</div><div class="empty-text">No submissions found.</div></div>';
+    return;
+  }
+  el.innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>Official</th>
+        <th>Tier</th>
+        <th>Certificate</th>
+        <th>Submitted</th>
+        <th>Status</th>
+        <th>Image</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody>${rows.map(c => {
+        const name = c.official?.full_name || 'Unknown';
+        const tier = c.official?.tier || '—';
+        const statusBadge = c.status === 'verified'
+          ? '<span class="badge" style="background:var(--teal-dim);color:var(--teal)">✓ Verified</span>'
+          : c.status === 'rejected'
+          ? '<span class="badge badge-suspended">✗ Rejected</span>'
+          : '<span class="badge" style="background:var(--amber-dim);color:var(--amber)">⏳ Pending</span>';
+        const actions = c.status === 'pending' ? `
+          <button class="action-btn approve-btn" onclick="approveCert('${c.id}','${c.official?.id}','${jsEsc(c.cert_type)}')">Approve</button>
+          <button class="action-btn reject-btn" onclick="rejectCert('${c.id}')">Reject</button>
+        ` : '—';
+        return `<tr>
+          <td><div style="font-weight:500">${esc(name)}</div></td>
+          <td>${tier !== '—' ? `<span class="badge badge-${esc(tier)}">${esc(tier)}</span>` : '—'}</td>
+          <td style="color:var(--text2)">${esc(c.cert_type)}</td>
+          <td style="color:var(--text2)">${fmtDate(c.submitted_at)}</td>
+          <td>${statusBadge}</td>
+          <td><a href="#" onclick="viewCertImage('${jsEsc(c.file_path)}');return false;" style="color:var(--teal);font-size:.8rem">View Image</a></td>
+          <td>${actions}</td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+async function viewCertImage(filePath) {
+  const { data, error } = await sb.storage.from('certificates').createSignedUrl(filePath, 120);
+  if (error || !data?.signedUrl) { showToast('Could not load image.'); return; }
+  window.open(data.signedUrl, '_blank');
+}
+
+async function approveCert(submissionId, officialId, certType) {
+  if (!confirm(`Approve "${certType}" for this official? This will add it to their profile certifications.`)) return;
+
+  // 1. Update submission status
+  const { error: updErr } = await sb
+    .from('certificate_submissions')
+    .update({ status: 'verified', reviewed_at: new Date().toISOString() })
+    .eq('id', submissionId);
+  if (updErr) { showToast('Error approving submission.'); return; }
+
+  // 2. Fetch existing certifications array
+  const { data: offData, error: offErr } = await sb
+    .from('officials')
+    .select('certifications')
+    .eq('id', officialId)
+    .single();
+  if (offErr) { showToast('Approved but could not update profile.'); await loadCertifications(); return; }
+
+  const existing = offData.certifications || [];
+  if (!existing.includes(certType)) {
+    const updated = [...existing, certType];
+    await sb.from('officials').update({ certifications: updated }).eq('id', officialId);
+  }
+
+  showToast(`✓ "${certType}" approved and added to official's profile.`);
+  await loadCertifications();
+}
+
+async function rejectCert(submissionId) {
+  const notes = prompt('Optional: reason for rejection (shown to official in future review)?') ?? '';
+  const { error } = await sb
+    .from('certificate_submissions')
+    .update({ status: 'rejected', reviewed_at: new Date().toISOString(), notes: notes || null })
+    .eq('id', submissionId);
+  if (error) { showToast('Error rejecting submission.'); return; }
+  showToast('Submission rejected.');
+  await loadCertifications();
+}
+
+// ── HELPERS ──
+function roleLabel(role) {
+  return {referee:'Official',league_admin:'League Admin',admin:'Platform Admin'}[role] || role;
+}
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

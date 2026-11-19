@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open LeagueOfficials</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="whistle-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--surface:#0d1117;--surface2:#141b27;--border:#1e2d3d;--teal:#1dd4a8;--teal-dim:rgba(29,212,168,0.12);--teal-glow:rgba(29,212,168,0.25);--text:#e8edf5;--text2:#b0c0d4;--text3:#7a8ea8;--white:#fff;--font-head:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 40px;max-width:440px;width:100%;text-align:center}
+
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:32px;text-decoration:none}
+.logo img{width:40px;height:40px;border-radius:10px}
+.logo-name{font-family:var(--font-head);font-weight:800;font-size:1.2rem;color:var(--white)}
+
+.icon{width:56px;height:56px;background:var(--teal-dim);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.75rem}
+
+h1{font-family:var(--font-head);font-size:1.5rem;font-weight:800;color:var(--white);margin-bottom:10px}
+.subtitle{font-size:0.93rem;color:var(--text2);line-height:1.65;margin-bottom:28px}
+
+/* spinner */
+.spinner-wrap{display:flex;justify-content:center;margin-bottom:24px}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.btn{display:inline-block;background:var(--teal);color:#000;font-family:var(--font-head);font-weight:700;font-size:0.95rem;padding:13px 28px;border-radius:10px;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer;width:100%;margin-bottom:12px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--teal-glow)}
+
+.btn-ghost{display:inline-block;color:var(--text2);font-size:0.85rem;text-decoration:none;transition:color 0.2s}
+.btn-ghost:hover{color:var(--teal)}
+
+.status-msg{font-size:0.88rem;color:var(--text3);margin-top:20px;line-height:1.6}
+
+/* states */
+#state-opening{display:block}
+#state-fallback{display:none}
+
+footer{margin-top:32px;font-size:0.8rem;color:var(--text3)}
+footer a{color:var(--text3);text-decoration:none}
+footer a:hover{color:var(--teal)}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <a class="logo" href="/">
+    <img src="whistle-icon.png" alt="LeagueOfficials">
+    <span class="logo-name">LeagueOfficials</span>
+  </a>
+
+  <!-- State: open the app -->
+  <div id="state-opening">
+    <div class="icon">📱</div>
+    <h1>Open LeagueOfficials</h1>
+    <p class="subtitle">Tap the button to open the app.</p>
+    <a id="open-app-btn" href="leagueofficials://" class="btn" style="margin-top:8px">Open LeagueOfficials</a>
+  </div>
+
+  <!-- State: fallback (app not installed) -->
+  <div id="state-fallback">
+    <div class="icon">📱</div>
+    <h1>App not found</h1>
+    <p class="subtitle">LeagueOfficials is not installed on this device. Get it on the App Store, then sign in to see this game.</p>
+    <a href="https://apps.apple.com/us/app/leagueofficials/id6761329538" class="btn">Get the app</a>
+    <br>
+    <a id="retry-btn" href="leagueofficials://" class="btn-ghost">Try again</a>
+  </div>
+</div>
+
+<footer>
+  <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="/support.html">Support</a>
+</footer>
+
+<script>
+(function () {
+  var deepLink = 'leagueofficials://';
+
+  function tryOpenApp(e) {
+    if (e) e.preventDefault();
+    window.location.href = deepLink;
+
+    // After 2.5s, if still on this page, show the fallback (app not installed)
+    setTimeout(function () {
+      if (!document.hidden) {
+        document.getElementById('state-opening').style.display = 'none';
+        document.getElementById('state-fallback').style.display = 'block';
+      }
+    }, 2500);
+  }
+
+  // Do NOT auto-attempt: iOS blocks programmatic scheme redirects. Wait for the tap.
+  document.getElementById('open-app-btn').addEventListener('click', tryOpenApp);
+
+  document.getElementById('retry-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    document.getElementById('state-fallback').style.display = 'none';
+    document.getElementById('state-opening').style.display = 'block';
+    tryOpenApp();
+  });
+})();
+</script>
+
+</body>
+</html>

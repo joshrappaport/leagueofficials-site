@@ -81,6 +81,26 @@ footer a:hover{color:var(--teal)}
 (function () {
   var deepLink = 'leagueofficials://';
 
+  // A link from an email can name one game and one action. Only these exact shapes are
+  // accepted; anything else opens the app the ordinary way.
+  try {
+    var q = new URLSearchParams(window.location.search);
+    var g = q.get('g') || '';
+    var r = q.get('r') || '';
+    var a = q.get('a') || '';
+    var isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(g);
+    if (isId && (r === 'ref' || r === 'league')) {
+      deepLink = 'leagueofficials://' + (r === 'league' ? 'league' : 'referee') + '/game-detail?id=' + g;
+      if ((r === 'ref' && a === 'withdraw') || (r === 'league' && a === 'edit')) {
+        deepLink += '&action=' + a;
+      }
+      document.getElementById('open-app-btn').setAttribute('href', deepLink);
+      document.getElementById('retry-btn').setAttribute('href', deepLink);
+      document.querySelector('#state-opening h1').textContent = 'Open this game';
+      document.querySelector('#state-opening .subtitle').textContent = 'Tap the button to open this game in the app.';
+    }
+  } catch (e) { /* keep the ordinary link */ }
+
   function tryOpenApp(e) {
     if (e) e.preventDefault();
     window.location.href = deepLink;

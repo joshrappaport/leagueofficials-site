@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirm your games | LeagueOfficials</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" href="whistle-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--surface:#0d1117;--surface2:#141b27;--border:#1e2d3d;--teal:#1dd4a8;--teal-dim:rgba(29,212,168,0.12);--text:#e8edf5;--text2:#b0c0d4;--text3:#7a8ea8;--white:#fff;--warn:#f5a524;--font-head:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 24px;max-width:480px;width:100%}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px;text-decoration:none}
+.logo img{width:40px;height:40px;border-radius:10px}
+.logo-name{font-family:var(--font-head);font-weight:800;font-size:1.2rem;color:var(--white)}
+h1{font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--white);margin-bottom:6px;text-align:center}
+.subtitle{font-size:0.95rem;color:var(--text2);margin-bottom:20px;text-align:center}
+.game{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.game-time{font-size:0.8rem;font-weight:700;letter-spacing:1px;color:var(--teal);text-transform:uppercase}
+.game-teams{font-family:var(--font-head);font-weight:700;font-size:1.05rem;color:var(--white);margin:2px 0}
+.game-detail{font-size:0.88rem;color:var(--text3);margin-bottom:12px}
+.btn{display:block;width:100%;background:var(--teal);color:#000;font-family:var(--font-head);font-weight:700;font-size:1rem;padding:14px 20px;border-radius:12px;border:none;cursor:pointer;margin-bottom:8px}
+.btn[disabled]{opacity:0.5;cursor:default}
+.btn-quiet{display:block;width:100%;background:transparent;color:var(--text2);font-family:var(--font-body);font-weight:600;font-size:0.92rem;padding:12px 20px;border-radius:12px;border:1px solid var(--border);cursor:pointer}
+.btn-link{background:none;border:none;color:var(--text3);font-size:0.85rem;text-decoration:underline;cursor:pointer;padding:6px 0}
+.answer{font-weight:700;font-size:0.98rem;margin-bottom:2px}
+.answer.worked{color:var(--teal)}
+.answer.not{color:var(--warn)}
+.all{margin-bottom:20px}
+.msg{font-size:0.95rem;color:var(--text2);text-align:center;margin-top:8px}
+footer{margin-top:24px;font-size:0.8rem;color:var(--text3);text-align:center}
+footer a{color:var(--text3)}
+</style>
+</head>
+<body>
+<div class="card">
+  <a class="logo" href="/">
+    <img src="whistle-icon.png" alt="LeagueOfficials">
+    <span class="logo-name">LeagueOfficials</span>
+  </a>
+  <h1 id="title">Confirm your games</h1>
+  <p class="subtitle" id="subtitle">Loading your games.</p>
+  <div id="all" class="all" style="display:none"><button class="btn" id="all-btn" type="button">Confirm All</button></div>
+  <div id="games"></div>
+  <p class="msg" id="msg"></p>
+</div>
+<footer>Questions? <a href="mailto:support@leagueofficials.app">support@leagueofficials.app</a></footer>
+
+<script>
+(function () {
+  var API = 'https://qknocijyywglylrqmkyt.supabase.co/rest/v1/rpc/';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrbm9jaWp5eXdnbHlscnFta3l0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MDUyOTUsImV4cCI6MjA4NzE4MTI5NX0.YRbE3BM91hqf_lsYJbRClKIUFU42iINBudSP2XHVYro';
+  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  var token = new URLSearchParams(window.location.search).get('t') || '';
+  var busy = false;
+
+  var elTitle = document.getElementById('title');
+  var elSub = document.getElementById('subtitle');
+  var elAll = document.getElementById('all');
+  var elAllBtn = document.getElementById('all-btn');
+  var elGames = document.getElementById('games');
+  var elMsg = document.getElementById('msg');
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  function call(fn, body) {
+    return fetch(API + fn, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + KEY },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('request failed');
+      return r.json();
+    });
+  }
+
+  function expired() {
+    elTitle.textContent = 'This link has expired';
+    elSub.textContent = 'Open the LeagueOfficials app and go to My Games, or email support@leagueofficials.app.';
+    elAll.style.display = 'none';
+    elGames.textContent = '';
+  }
+
+  function problem() {
+    elMsg.textContent = 'Something went wrong. Check your connection and try again.';
+  }
+
+  function respond(ids, worked) {
+    if (busy) return;
+    busy = true;
+    elMsg.textContent = '';
+    call('postgame_link_respond', { p_token: token, p_assignment_ids: ids, p_worked: worked })
+      .then(function (data) { busy = false; render(data, true); })
+      .catch(function () { busy = false; problem(); });
+  }
+
+  function render(data, justAnswered) {
+    if (!data || data.ok !== true) { expired(); return; }
+    var games = data.games || [];
+    elGames.textContent = '';
+    if (games.length === 0) {
+      elTitle.textContent = 'Nothing to confirm';
+      elSub.textContent = 'There are no games to confirm for ' + data.day + '.';
+      elAll.style.display = 'none';
+      return;
+    }
+    var open = games.filter(function (g) { return !g.response; });
+    elTitle.textContent = open.length === 0 ? 'Thank you, ' + data.first_name : 'Confirm your games';
+    elSub.textContent = open.length === 0
+      ? 'Your games on ' + data.day + ' are recorded. You can close this page.'
+      : 'Hi ' + data.first_name + '. These are your games on ' + data.day + '.';
+    elAll.style.display = open.length > 1 ? 'block' : 'none';
+    elAllBtn.textContent = 'Confirm All ' + open.length + ' Games';
+    elAllBtn.onclick = function () { respond(open.map(function (g) { return g.id; }), true); };
+
+    games.forEach(function (g) {
+      var box = el('div', 'game');
+      box.appendChild(el('div', 'game-time', g.time));
+      box.appendChild(el('div', 'game-teams', g.teams));
+      box.appendChild(el('div', 'game-detail', [g.detail, g.league].filter(Boolean).join(' · ')));
+      if (g.response) {
+        box.appendChild(el('div', 'answer ' + (g.response === 'worked' ? 'worked' : 'not'),
+          g.response === 'worked' ? 'Confirmed. You worked this game.' : 'Recorded. You did not work this game.'));
+        var change = el('button', 'btn-link', 'Change my answer');
+        change.type = 'button';
+        change.onclick = function () { respond([g.id], g.response !== 'worked'); };
+        box.appendChild(change);
+      } else {
+        var yes = el('button', 'btn', 'Confirm I Worked This Game');
+        yes.type = 'button';
+        yes.onclick = function () { respond([g.id], true); };
+        var no = el('button', 'btn-quiet', 'I Did Not Work This Game');
+        no.type = 'button';
+        no.onclick = function () { respond([g.id], false); };
+        box.appendChild(yes);
+        box.appendChild(no);
+      }
+      elGames.appendChild(box);
+    });
+    if (justAnswered && open.length === 0) window.scrollTo(0, 0);
+  }
+
+  if (!UUID.test(token)) { expired(); return; }
+  call('postgame_link_view', { p_token: token })
+    .then(function (data) { render(data, false); })
+    .catch(function () { elSub.textContent = ''; problem(); });
+})();
+</script>
+</body>
+</html>

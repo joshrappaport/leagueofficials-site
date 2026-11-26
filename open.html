@@ -88,8 +88,18 @@ footer a:hover{color:var(--teal)}
     var g = q.get('g') || '';
     var r = q.get('r') || '';
     var a = q.get('a') || '';
+    var p = q.get('p') || '';
+    var tab = q.get('tab') || '';
     var isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(g);
-    if (isId && (r === 'ref' || r === 'league')) {
+    if (r === 'ref' && p === 'mygames') {
+      // My Games, from 1.0.7. Older versions open Home for this link.
+      deepLink = 'leagueofficials://referee/mygames?tab=' + (tab === 'completed' ? 'completed' : 'upcoming');
+      document.getElementById('open-app-btn').setAttribute('href', deepLink);
+      document.getElementById('retry-btn').setAttribute('href', deepLink);
+      document.querySelector('#state-opening h1').textContent = 'Open My Games';
+      document.querySelector('#state-opening .subtitle').textContent = 'Tap the button to open My Games in the app.';
+      document.querySelector('#state-fallback .subtitle').textContent = 'LeagueOfficials is not installed on this device. Get it on the App Store, then sign in to see your games.';
+    } else if (isId && (r === 'ref' || r === 'league')) {
       deepLink = 'leagueofficials://' + (r === 'league' ? 'league' : 'referee') + '/game-detail?id=' + g;
       if ((r === 'ref' && a === 'withdraw') || (r === 'league' && a === 'edit')) {
         deepLink += '&action=' + a;

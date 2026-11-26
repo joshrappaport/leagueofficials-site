@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LeagueOfficials — Admin</title>
 <meta name="robots" content="noindex">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://qknocijyywglylrqmkyt.supabase.co wss://qknocijyywglylrqmkyt.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -308,10 +309,20 @@ function esc(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
-// JS-string-escape a value for use inside a single-quoted onclick attribute.
-function jsEsc(str) {
-  return String(str ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}
+// Buttons built from database values carry the values in data- attributes (HTML-escaped by esc)
+// and are handled here. Never put a database value inside an inline onclick string.
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const d = el.dataset;
+  switch (d.act) {
+    case 'invite': copyInvite(d.email); break;
+    case 'user-status': setUserStatus(d.id, d.status); break;
+    case 'cert-approve': approveCert(d.id, d.official, d.cert); break;
+    case 'cert-reject': rejectCert(d.id); break;
+    case 'cert-image': e.preventDefault(); viewCertImage(d.path); break;
+  }
+});
 
 // ── AUTH ──
 document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -488,16 +499,16 @@ async function loadWaitlist() {
           <td>${esc(w.zip_code||'—')}</td>
           <td style="color:var(--text2);font-size:.78rem;max-width:220px">${esc((w.pain_points||[]).join(', ')||'—')}</td>
           <td style="color:var(--text2)">${fmtDate(w.created_at)}</td>
-          <td><button class="btn-sm btn-copy" onclick="copyInvite('${jsEsc(w.email)}','${jsEsc(w.role||'')}')">✉ Invite</button></td>
+          <td><button class="btn-sm btn-copy" data-act="invite" data-email="${esc(w.email)}">✉ Invite</button></td>
         </tr>`).join('')}
       </tbody>
     </table></div>`;
 }
 
-function copyInvite(email, role) {
+function copyInvite(email) {
   const subject = `You're on the LeagueOfficials early access list`;
   const body = `Hi,\n\nThanks for signing up for LeagueOfficials early access — we're almost ready to go live in Suffolk County.\n\nWe'll be in touch very soon with your invite link.\n\nBest,\nJosh\nLeagueOfficials`;
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const mailto = `mailto:${encodeURIComponent(email).replace(/%40/g, '@')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   navigator.clipboard.writeText(`To: ${email}\nSubject: ${subject}\n\n${body}`).catch(()=>{});
   window.open(mailto);
   showToast('✉ Invite email opened');
@@ -535,7 +546,7 @@ function renderUsers(users) {
     <div class="table-wrap"><table>
       <thead><tr><th>Name / Email</th><th>Role</th><th>Tier</th><th>Games</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
       <tbody>${users.map(u => `
-        <tr id="user-row-${u.id}">
+        <tr id="user-row-${esc(u.id)}">
           <td>
             <div style="font-weight:500">${esc(u.full_name||'—')}${u.official?.is_student?' <span style="font-size:.65rem;color:var(--amber)" title="Student athlete">★</span>':''}</div>
             <div style="color:var(--text2);font-size:.78rem">${esc(u.email)}</div>
@@ -548,8 +559,8 @@ function renderUsers(users) {
           <td>
             ${u.role !== 'admin' ? (
               u.status === 'suspended'
-                ? `<button class="btn-sm btn-success" onclick="setUserStatus('${u.id}','active')">Reactivate</button>`
-                : `<button class="btn-sm btn-danger" onclick="setUserStatus('${u.id}','suspended')">Suspend</button>`
+                ? `<button class="btn-sm btn-success" data-act="user-status" data-id="${esc(u.id)}" data-status="active">Reactivate</button>`
+                : `<button class="btn-sm btn-danger" data-act="user-status" data-id="${esc(u.id)}" data-status="suspended">Suspend</button>`
             ) : '—'}
           </td>
         </tr>`).join('')}
@@ -792,8 +803,8 @@ function renderCertifications(rows) {
           ? '<span class="badge badge-suspended">✗ Rejected</span>'
           : '<span class="badge" style="background:var(--amber-dim);color:var(--amber)">⏳ Pending</span>';
         const actions = c.status === 'pending' ? `
-          <button class="action-btn approve-btn" onclick="approveCert('${c.id}','${c.official?.id}','${jsEsc(c.cert_type)}')">Approve</button>
-          <button class="action-btn reject-btn" onclick="rejectCert('${c.id}')">Reject</button>
+          <button class="action-btn approve-btn" data-act="cert-approve" data-id="${esc(c.id)}" data-official="${esc(c.official?.id)}" data-cert="${esc(c.cert_type)}">Approve</button>
+          <button class="action-btn reject-btn" data-act="cert-reject" data-id="${esc(c.id)}">Reject</button>
         ` : '—';
         return `<tr>
           <td><div style="font-weight:500">${esc(name)}</div></td>
@@ -801,7 +812,7 @@ function renderCertifications(rows) {
           <td style="color:var(--text2)">${esc(c.cert_type)}</td>
           <td style="color:var(--text2)">${fmtDate(c.submitted_at)}</td>
           <td>${statusBadge}</td>
-          <td><a href="#" onclick="viewCertImage('${jsEsc(c.file_path)}');return false;" style="color:var(--teal);font-size:.8rem">View Image</a></td>
+          <td><a href="#" data-act="cert-image" data-path="${esc(c.file_path)}" style="color:var(--teal);font-size:.8rem">View Image</a></td>
           <td>${actions}</td>
         </tr>`;
       }).join('')}
